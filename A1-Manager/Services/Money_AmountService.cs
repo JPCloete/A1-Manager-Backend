@@ -1,5 +1,4 @@
 ﻿using A1_Manager.ApplicationDbContext;
-using A1_Manager.Models;
 using A1_Manager.Models_Support;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

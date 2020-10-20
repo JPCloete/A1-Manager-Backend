@@ -1,5 +1,5 @@
-﻿using A1_Manager.JoinModels;
-using A1_Manager.Models;
+﻿using A1_Manager.Models_Joins;
+using A1_Manager.Models_Main;
 using A1_Manager.Models_Support;
 using Microsoft.EntityFrameworkCore;
 using System;

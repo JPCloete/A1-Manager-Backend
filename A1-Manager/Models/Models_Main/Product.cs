@@ -1,11 +1,10 @@
-﻿using A1_Manager.Interfaces;
-using A1_Manager.JoinModels;
+﻿using A1_Manager.Main_Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace A1_Manager.Models
+namespace A1_Manager.Models_Main
 {
     public class Product : IProduct
     {

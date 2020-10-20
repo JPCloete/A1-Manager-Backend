@@ -1,4 +1,4 @@
-﻿using A1_Manager.Interfaces;
+﻿using A1_Manager.Support_Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;

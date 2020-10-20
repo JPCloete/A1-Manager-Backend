@@ -1,5 +1,5 @@
 ﻿using A1_Manager.ApplicationDbContext;
-using A1_Manager.Models;
+using A1_Manager.Models_Support;
 using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using Newtonsoft.Json;

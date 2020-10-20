@@ -1,12 +1,13 @@
-﻿using A1_Manager.Interfaces;
-using A1_Manager.JoinModels;
+﻿using A1_Manager.Main_Interfaces;
+using A1_Manager.Models_Joins;
+using A1_Manager.Models_Support;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace A1_Manager.Models
+namespace A1_Manager.Models_Main
 {
     public class Employee : IEmployee
     {

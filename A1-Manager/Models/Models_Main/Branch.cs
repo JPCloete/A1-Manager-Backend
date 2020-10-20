@@ -1,10 +1,11 @@
-﻿using A1_Manager.Interfaces;
-using A1_Manager.JoinModels;
+﻿using A1_Manager.Main_Interfaces;
+using A1_Manager.Models_Joins;
+using A1_Manager.Models_Main;
 using A1_Manager.Models_Support;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace A1_Manager.Models
+namespace A1_Manager.Models_Main
 {
     public class Branch : IBranch
     {
@@ -42,16 +43,16 @@ namespace A1_Manager.Models
         public int OccupancyCostId { get; set; }
 
         [ForeignKey("OccupancyCostId")]
-        public Money OccupancyCost { get; set; } 
+        public Money OccupancyCost { get; set; }
 
-        public virtual ICollection<BranchSupplier>? Suppliers { get; set; }
+        public virtual ICollection<BranchSupplier> Suppliers { get; set; }
 
-        public virtual ICollection<BranchProduct>? Products { get; set; }
+        public virtual ICollection<BranchProduct> Products { get; set; }
 
-        public virtual ICollection<BranchSale>? Sales { get; set; }
+        public virtual ICollection<BranchSale> Sales { get; set; }
 
-        public virtual ICollection<Employee>? Employees { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
 
-        public virtual ICollection<Order>? Orders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }
