@@ -248,7 +248,7 @@ namespace A1_Manager.ApplicationDbContext
 
                 o.HasMany(x => x.Products)
                     .WithOne(y => y.Order)
-                    .HasForeignKey(x => x.ProductId);
+                    .HasForeignKey(x => x.BranchProductId);
             });
 
             modelBuilder.Entity<Product>(p =>
