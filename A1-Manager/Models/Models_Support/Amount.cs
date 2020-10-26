@@ -8,8 +8,8 @@ namespace A1_Manager.Models_Support
 {
     public class Amount : IAmount
     {
-        public int Id { get; set; }
-        public float Volume { get; set; }
-        public string VolumeType { get; set; }
+        public virtual int Id { get; set; }
+        public virtual float Volume { get; set; }
+        public virtual string VolumeType { get; set; }
     }
 }

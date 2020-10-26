@@ -18,28 +18,33 @@ namespace A1_Manager.Models_Main
             Branches = new HashSet<BranchSupplier>();
         }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int IdentityId { get; set; }
+        public virtual int IdentityId { get; set; }
 
         [ForeignKey("IdentityId")]
-        public Identity Identity { get; set; }
+        public virtual Identity Identity { get; set; }
 
-        public string Email { get; set; }
+        public virtual string Email { get; set; }
 
-        public string Telephone { get; set; }
+        public virtual string Telephone { get; set; }
 
-        public int CountryId { get; set; }
+        public virtual int DateAddedId { get; set; }
+
+        [ForeignKey("DateAddedId")]
+        public virtual Date DateAdded { get; set; }
+
+        public virtual int CountryId { get; set; }
 
         [ForeignKey("CountryId")]
         public virtual Country Country { get; set; }
 
-        public int CityId { get; set; }
+        public virtual int CityId { get; set; }
 
         [ForeignKey("CityId")]
         public virtual City City { get; set; }
 
-        public string Address { get; set; }
+        public virtual string Address { get; set; }
 
         public virtual ICollection<BranchProduct>? Products { get; set; }
 

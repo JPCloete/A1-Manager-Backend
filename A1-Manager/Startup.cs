@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using A1_Manager.ApplicationDbContext;
-using A1_Manager.ServiceInterfaces;
+using A1_Manager.Interfaces.Services_Interfaces;
 using A1_Manager.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +45,22 @@ namespace A1_Manager
 
             services.AddSingleton<IConnectionMultiplexer>(x =>
                 ConnectionMultiplexer.Connect(Configuration.GetValue<string>("RedisConnection")));
+
+            services.AddScoped<IAmountService, AmountService>();
+
+            services.AddScoped<IContractService, ContractService>();
+
+            services.AddScoped<IDateService, DateService>();
+
+            services.AddScoped<IFkService, FkService>();
+
+            services.AddScoped<IIdentityService, IdentityService>();
+
+            services.AddScoped<ILocationService, LocationService>();
+
+            services.AddScoped<IMoneyService, MoneyService>();
+
+            services.AddScoped<IMoneyPerAmountService, MoneyPerAmountService>();
 
             services.AddScoped<IRedisService, RedisService>();
 

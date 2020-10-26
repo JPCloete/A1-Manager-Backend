@@ -1,4 +1,5 @@
 ﻿using A1_Manager.Main_Interfaces;
+using A1_Manager.Models.Models_Main;
 using A1_Manager.Models_Joins;
 using A1_Manager.Models_Support;
 using System;
@@ -15,40 +16,43 @@ namespace A1_Manager.Models_Main
         public Employee()
         {
             Roles = new HashSet<EmployeeRole>();
+            Status = "Not Working";
         }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int FirstNameId { get; set; }
+        public virtual int FirstNameId { get; set; }
 
         [ForeignKey("FirstNameId")]
-        public Identity FirstName { get; set; }
+        public virtual Identity FirstName { get; set; }
 
-        public int LastNameId { get; set; }
+        public virtual int LastNameId { get; set; }
 
         [ForeignKey("LastNameId")]
-        public Identity LastName { get; set; }
+        public virtual Identity LastName { get; set; }
 
-        public string ImageURL { get; set; }
+        public virtual string ImageURL { get; set; }
 
-        public int Presence { get; set; }
+        public virtual string? Status { get; set; } 
 
-        public int LeaveRemaining { get; set; }
+        public virtual int LeaveRemaining { get; set; }
 
-        public int SalaryId { get; set; }
+        public virtual int SalaryId { get; set; }
 
         [ForeignKey("SalaryId")]
         public virtual Money Salary { get; set; }
 
-        public int ContractId { get; set; }
+        public virtual int? ContractId { get; set; }
+        [ForeignKey("ContractId")]
+        public virtual Contract? Contract { get; set; }
 
-        public virtual Contract Contract { get; set; }
+        public virtual int BranchId { get; set; }
 
-        public int BranchId { get; set; }
-
-        public Branch Branch { get; set; }
+        public virtual Branch Branch { get; set; }
 
         public virtual ICollection<EmployeeRole>? Roles { get; set; }
+
+        public virtual ICollection<EmployeePresence>? Presence { get; set; }
 
     }
 }

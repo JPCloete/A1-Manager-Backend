@@ -11,7 +11,7 @@ namespace A1_Manager.Main_Interfaces
 
         public string ImageURL { get; set; }
 
-        public int Presence { get; set; }
+        public string Status { get; set; }
 
         public int LeaveRemaining { get; set; }
     }

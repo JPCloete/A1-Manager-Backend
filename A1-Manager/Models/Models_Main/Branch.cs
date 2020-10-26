@@ -18,32 +18,47 @@ namespace A1_Manager.Models_Main
             Orders = new HashSet<Order>();
         }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public string Email { get; set; }
+        public virtual int NameId { get; set; }
 
-        public string Telephone { get; set; }
+        [ForeignKey("NameId")]
+        public virtual Identity Name { get; set; }
 
-        public int BrandId { get; set; }
+        public virtual string Email { get; set; }
 
-        public virtual Brand Brand { get; set; }
+        public virtual string Telephone { get; set; }
 
-        public int CountryId { get; set; }
+        public virtual int DateAddedId { get; set; }
+
+        [ForeignKey("DateAddedId")]
+        public virtual Date DateAdded { get; set; }
+
+        public virtual int CountryId { get; set; }
 
         [ForeignKey("CountryId")]
         public virtual Country Country { get; set; }
 
-        public int CityId { get; set; }
+        public virtual int CityId { get; set; }
 
         [ForeignKey("CityId")]
         public virtual City City { get; set; }
 
-        public string Address { get; set; }
+        public virtual string Address { get; set; }
 
-        public int OccupancyCostId { get; set; }
+        public virtual int PreferredCurrencyId { get; set; }
+
+        [ForeignKey("PreferredCurrencyId")]
+        public virtual Currency PreferredCurrency { get; set; }
+
+        public virtual int OccupancyCostId { get; set; }
 
         [ForeignKey("OccupancyCostId")]
-        public Money OccupancyCost { get; set; }
+        public virtual Money OccupancyCost { get; set; }
+
+        public virtual int BrandId { get; set; }
+
+        public virtual Brand Brand { get; set; }
 
         public virtual ICollection<BranchSupplier> Suppliers { get; set; }
 

@@ -8,15 +8,15 @@ namespace A1_Manager.Models_Support
 {
     public class MoneyPerAmount
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int MoneyId { get; set; }
+        public virtual int MoneyId { get; set; }
 
         [ForeignKey("MoneyId")]
-        public Money Money { get; set; }
+        public virtual Money Money { get; set; }
 
-        public int AmountId { get; set; }
+        public virtual int AmountId { get; set; }
 
-        public Amount Amount { get; set; }
+        public virtual Amount Amount { get; set; }
     }
 }

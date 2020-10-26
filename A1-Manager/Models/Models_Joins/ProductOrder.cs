@@ -8,12 +8,12 @@ namespace A1_Manager.Models_Joins
 {
     public class ProductOrder
     {
-        public int BranchProductId { get; set; }
+        public virtual int BranchProductId { get; set; }
 
-        public BranchProduct BranchProduct { get; set; }
+        public virtual BranchProduct BranchProduct { get; set; }
 
-        public int OrderId { get; set; }
+        public virtual int OrderId { get; set; }
 
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }
     }
 }

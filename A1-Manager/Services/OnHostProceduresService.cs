@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace A1_Manager.Services
 {
+    //Service used to get a list of currencies and countries to store in application's database.
     public class Currency_LocationService : Controller
     {
         private readonly AppDbContext _db;

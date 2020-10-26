@@ -1,4 +1,5 @@
-﻿using A1_Manager.Models_Joins;
+﻿using A1_Manager.Models.Models_Main;
+using A1_Manager.Models_Joins;
 using A1_Manager.Models_Main;
 using A1_Manager.Models_Support;
 using Microsoft.EntityFrameworkCore;
@@ -80,12 +81,6 @@ namespace A1_Manager.ApplicationDbContext
                     .WithMany(y => y.Branches)
                     .HasForeignKey(x => x.BrandId);
 
-                b.HasOne(x => x.Country)
-                    .WithOne()
-                    .HasForeignKey<Branch>(x => x.CountryId);
-
-                b.HasOne(x => x.City);
-
                 b.HasMany(x => x.Sales)
                     .WithOne(y => y.Branch)
                     .HasForeignKey(x => x.BranchId);
@@ -128,34 +123,14 @@ namespace A1_Manager.ApplicationDbContext
             {
                 bs.HasKey(x => x.Id);
 
-                bs.HasOne(x => x.Date)
-                    .WithOne()
-                    .HasForeignKey<BranchSale>(x => x.DateId);
-
                 bs.HasOne(x => x.Branch)
                     .WithMany(y => y.Sales)
                     .HasForeignKey(x => x.BranchId);
-
-                bs.HasOne(x => x.Expenses)
-                    .WithOne()
-                    .HasForeignKey<BranchSale>(x => x.ExpensesId);
-
-                bs.HasOne(x => x.Profit)
-                    .WithOne()
-                    .HasForeignKey<BranchSale>(x => x.ProfitId);
-
-                bs.HasOne(x => x.Revenue)
-                    .WithOne()
-                    .HasForeignKey<BranchSale>(x => x.RevenueId);
             });
 
             modelBuilder.Entity<Brand>(b =>
             {
                 b.HasKey(x => x.Id);
-
-                b.HasOne(x => x.DateAdded)
-                    .WithOne()
-                    .HasForeignKey<Brand>(x => x.DateAddedId);
 
                 b.HasMany(x => x.Branches)
                     .WithOne(y => y.Brand)
@@ -191,10 +166,6 @@ namespace A1_Manager.ApplicationDbContext
             modelBuilder.Entity<Contract>(c =>
             {
                 c.HasKey(x => x.Id);
-
-                c.HasOne(x => x.Employee)
-                    .WithOne(y => y.Contract)
-                    .HasForeignKey<Contract>(x => x.EmployeeId);
             });
 
             modelBuilder.Entity<Country>(c =>
@@ -211,16 +182,25 @@ namespace A1_Manager.ApplicationDbContext
             {
                 e.HasKey(x => x.Id);
 
-                e.HasOne(x => x.Contract)
-                    .WithOne(y => y.Employee)
-                    .HasForeignKey<Employee>(x => x.ContractId);
-
                 e.HasOne(x => x.Branch)
                     .WithMany(y => y.Employees)
                     .HasForeignKey(x => x.BranchId);
 
                 e.HasMany(x => x.Roles)
                     .WithOne(y => y.Employee)
+                    .HasForeignKey(x => x.EmployeeId);
+
+                e.HasMany(x => x.Presence)
+                    .WithOne(y => y.Employee)
+                    .HasForeignKey(x => x.EmployeeId);
+            });
+
+            modelBuilder.Entity<EmployeePresence>(ep =>
+            {
+                ep.HasKey(x => x.Id);
+
+                ep.HasOne(x => x.Employee)
+                    .WithMany(y => y.Presence)
                     .HasForeignKey(x => x.EmployeeId);
             });
 
@@ -297,8 +277,6 @@ namespace A1_Manager.ApplicationDbContext
         }
 
         //JoinModels
-        public DbSet<BranchProduct> BranchProducts { get; set; }
-
         public DbSet<BranchSupplier> BranchSuppliers { get; set; }
 
         public DbSet<EmployeeRole> EmployeeRoles { get; set; }
@@ -328,9 +306,13 @@ namespace A1_Manager.ApplicationDbContext
 
         public DbSet<Employee> Employees { get; set; }
 
+        public DbSet<EmployeePresence> EmployeePresence { get; set; }
+
         public DbSet<Identity> Identities { get; set; }
 
         public DbSet<Money> Money { get; set; }
+
+        public DbSet<MoneyPerAmount> MoneyPerAmount { get; set; }
 
         public DbSet<Order> Orders { get; set; }
 

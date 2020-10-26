@@ -9,6 +9,6 @@ namespace A1_Manager.Support_Interfaces
     {
         public int Id { get; set; }
 
-        public DateTime Time { get; set; }
+        public string Time { get; set; }
     }
 }

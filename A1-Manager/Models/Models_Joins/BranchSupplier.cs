@@ -8,11 +8,11 @@ namespace A1_Manager.Models_Joins
 {
     public class BranchSupplier
     {
-        public int BranchId { get; set; }
+        public virtual int BranchId { get; set; }
 
         public virtual Branch Branch { get; set; }
 
-        public int SupplierId { get; set; }
+        public virtual int SupplierId { get; set; }
 
         public virtual Supplier Supplier { get; set; }
     }

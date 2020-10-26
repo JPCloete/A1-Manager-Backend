@@ -41,5 +41,11 @@ namespace A1_Manager.Models_FromBody
         public virtual int RoleId { get; set; }
 
         public virtual int SupplierId { get; set; }
+
+        public virtual float AmountVolume { get; set; }
+
+        public virtual float BranchProductPrice { get; set; }
+
+        public virtual float BranchProductRetailPrice { get; set; }
     }
 }

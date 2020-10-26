@@ -18,20 +18,25 @@ namespace A1_Manager.Models_Main
             Roles = new HashSet<Role>();
         }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
-        public string LogoURL { get; set; }
+        public virtual string LogoURL { get; set; }
 
-        public string Email { get; set; }
+        public virtual string Email { get; set; }
 
-        public string Telephone { get; set; }
+        public virtual string Telephone { get; set; }
 
-        public int DateAddedId { get; set; }
+        public virtual int DateAddedId { get; set; }
 
         [ForeignKey("DateAddedId")]
-        public Date DateAdded { get; set; }
+        public virtual Date DateAdded { get; set; }
+
+        public virtual int PreferredCurrencyId { get; set; }
+
+        [ForeignKey("PreferredCurrencyId")]
+        public virtual Currency PreferredCurrency { get; set; }
 
         public virtual ICollection<Branch>? Branches { get; set; }
 

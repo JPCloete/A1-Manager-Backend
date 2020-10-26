@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace A1_Manager.Migrations
 {
-    public partial class FKKEyTest : Migration
+    public partial class InitMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,8 +12,8 @@ namespace A1_Manager.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Volume = table.Column<int>(nullable: false),
-                    VolumeType = table.Column<int>(nullable: false)
+                    Volume = table.Column<float>(nullable: false),
+                    VolumeType = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,7 +66,7 @@ namespace A1_Manager.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Time = table.Column<DateTime>(nullable: false)
+                    Time = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,36 +84,6 @@ namespace A1_Manager.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Identities", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Suppliers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdentityId = table.Column<int>(nullable: false),
-                    Email = table.Column<string>(nullable: true),
-                    Telephone = table.Column<string>(nullable: true),
-                    CountryId = table.Column<int>(nullable: false),
-                    CityId = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Suppliers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Suppliers_Cities_CityId",
-                        column: x => x.CityId,
-                        principalTable: "Cities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Suppliers_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -147,7 +116,8 @@ namespace A1_Manager.Migrations
                     LogoURL = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Telephone = table.Column<string>(nullable: true),
-                    DateAddedId = table.Column<int>(nullable: false)
+                    DateAddedId = table.Column<int>(nullable: false),
+                    PreferredCurrencyId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -158,6 +128,12 @@ namespace A1_Manager.Migrations
                         principalTable: "Dates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Brands_Currencies_PreferredCurrencyId",
+                        column: x => x.PreferredCurrencyId,
+                        principalTable: "Currencies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -166,10 +142,9 @@ namespace A1_Manager.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractPdfURL = table.Column<string>(nullable: true),
+                    PdfURL = table.Column<string>(nullable: true),
                     SignedDateId = table.Column<int>(nullable: false),
-                    ExpirationDateId = table.Column<int>(nullable: false),
-                    EmployeeId = table.Column<int>(nullable: false)
+                    ExpirationDateId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,17 +164,90 @@ namespace A1_Manager.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Suppliers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdentityId = table.Column<int>(nullable: false),
+                    Email = table.Column<string>(nullable: true),
+                    Telephone = table.Column<string>(nullable: true),
+                    DateAddedId = table.Column<int>(nullable: false),
+                    CountryId = table.Column<int>(nullable: false),
+                    CityId = table.Column<int>(nullable: false),
+                    Address = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Suppliers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Suppliers_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Suppliers_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Suppliers_Dates_DateAddedId",
+                        column: x => x.DateAddedId,
+                        principalTable: "Dates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Suppliers_Identities_IdentityId",
+                        column: x => x.IdentityId,
+                        principalTable: "Identities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MoneyPerAmount",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MoneyId = table.Column<int>(nullable: false),
+                    AmountId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MoneyPerAmount", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MoneyPerAmount_Amount_AmountId",
+                        column: x => x.AmountId,
+                        principalTable: "Amount",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MoneyPerAmount_Money_MoneyId",
+                        column: x => x.MoneyId,
+                        principalTable: "Money",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Branches",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    NameId = table.Column<int>(nullable: false),
                     Email = table.Column<string>(nullable: true),
                     Telephone = table.Column<string>(nullable: true),
-                    BrandId = table.Column<int>(nullable: false),
+                    DateAddedId = table.Column<int>(nullable: false),
                     CountryId = table.Column<int>(nullable: false),
                     CityId = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(nullable: true)
+                    Address = table.Column<string>(nullable: true),
+                    PreferredCurrencyId = table.Column<int>(nullable: false),
+                    OccupancyCostId = table.Column<int>(nullable: false),
+                    BrandId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -220,6 +268,30 @@ namespace A1_Manager.Migrations
                         name: "FK_Branches_Countries_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Branches_Dates_DateAddedId",
+                        column: x => x.DateAddedId,
+                        principalTable: "Dates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Branches_Identities_NameId",
+                        column: x => x.NameId,
+                        principalTable: "Identities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Branches_Money_OccupancyCostId",
+                        column: x => x.OccupancyCostId,
+                        principalTable: "Money",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Branches_Currencies_PreferredCurrencyId",
+                        column: x => x.PreferredCurrencyId,
+                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -281,7 +353,7 @@ namespace A1_Manager.Migrations
                     ImageURL = table.Column<string>(nullable: true),
                     BarCode = table.Column<string>(nullable: true),
                     BarCodeImageURL = table.Column<string>(nullable: true),
-                    SupplierId = table.Column<int>(nullable: false),
+                    DateAddedId = table.Column<int>(nullable: false),
                     BrandId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -294,9 +366,9 @@ namespace A1_Manager.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Products_Suppliers_SupplierId",
-                        column: x => x.SupplierId,
-                        principalTable: "Suppliers",
+                        name: "FK_Products_Dates_DateAddedId",
+                        column: x => x.DateAddedId,
+                        principalTable: "Dates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -408,10 +480,10 @@ namespace A1_Manager.Migrations
                     FirstNameId = table.Column<int>(nullable: false),
                     LastNameId = table.Column<int>(nullable: false),
                     ImageURL = table.Column<string>(nullable: true),
-                    Presence = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(nullable: true),
                     LeaveRemaining = table.Column<int>(nullable: false),
                     SalaryId = table.Column<int>(nullable: false),
-                    ContractId = table.Column<int>(nullable: false),
+                    ContractId = table.Column<int>(nullable: true),
                     BranchId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -428,7 +500,7 @@ namespace A1_Manager.Migrations
                         column: x => x.ContractId,
                         principalTable: "Contracts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Employees_Identities_FirstNameId",
                         column: x => x.FirstNameId,
@@ -505,100 +577,95 @@ namespace A1_Manager.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BranchProducts",
+                name: "BranchProduct",
                 columns: table => new
                 {
-                    BranchId = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(nullable: false),
+                    DateAddedId = table.Column<int>(nullable: false),
+                    SupplierId = table.Column<int>(nullable: false),
                     CostId = table.Column<int>(nullable: false),
                     RetailPriceId = table.Column<int>(nullable: false),
-                    StockId = table.Column<int>(nullable: false)
+                    StockId = table.Column<int>(nullable: false),
+                    BranchId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BranchProducts", x => new { x.BranchId, x.ProductId });
+                    table.PrimaryKey("PK_BranchProduct", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BranchProducts_Branches_BranchId",
+                        name: "FK_BranchProduct_Branches_BranchId",
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_BranchProducts_Money_CostId",
+                        name: "FK_BranchProduct_Money_CostId",
                         column: x => x.CostId,
                         principalTable: "Money",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_BranchProducts_Products_ProductId",
+                        name: "FK_BranchProduct_Dates_DateAddedId",
+                        column: x => x.DateAddedId,
+                        principalTable: "Dates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BranchProduct_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_BranchProducts_Money_RetailPriceId",
+                        name: "FK_BranchProduct_MoneyPerAmount_RetailPriceId",
                         column: x => x.RetailPriceId,
-                        principalTable: "Money",
+                        principalTable: "MoneyPerAmount",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_BranchProducts_Amount_StockId",
+                        name: "FK_BranchProduct_Amount_StockId",
                         column: x => x.StockId,
                         principalTable: "Amount",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BranchProduct_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductSales",
+                name: "EmployeePresence",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateId = table.Column<int>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false),
-                    BranchId = table.Column<int>(nullable: false),
-                    ExpensesId = table.Column<int>(nullable: true),
-                    ProfitId = table.Column<int>(nullable: true),
-                    RevenueId = table.Column<int>(nullable: true)
+                    EmployeeId = table.Column<int>(nullable: false),
+                    ClockInTimeId = table.Column<int>(nullable: false),
+                    ClockOutTimeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductSales", x => x.Id);
+                    table.PrimaryKey("PK_EmployeePresence", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductSales_Branches_BranchId",
-                        column: x => x.BranchId,
-                        principalTable: "Branches",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProductSales_Dates_DateId",
-                        column: x => x.DateId,
+                        name: "FK_EmployeePresence_Dates_ClockInTimeId",
+                        column: x => x.ClockInTimeId,
                         principalTable: "Dates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductSales_Money_ExpensesId",
-                        column: x => x.ExpensesId,
-                        principalTable: "Money",
+                        name: "FK_EmployeePresence_Dates_ClockOutTimeId",
+                        column: x => x.ClockOutTimeId,
+                        principalTable: "Dates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductSales_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProductSales_Money_ProfitId",
-                        column: x => x.ProfitId,
-                        principalTable: "Money",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProductSales_Money_RevenueId",
-                        column: x => x.RevenueId,
-                        principalTable: "Money",
+                        name: "FK_EmployeePresence_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -631,22 +698,69 @@ namespace A1_Manager.Migrations
                 name: "ProductOrders",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(nullable: false),
+                    BranchProductId = table.Column<int>(nullable: false),
                     OrderId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductOrders", x => new { x.ProductId, x.OrderId });
+                    table.PrimaryKey("PK_ProductOrders", x => new { x.BranchProductId, x.OrderId });
                     table.ForeignKey(
-                        name: "FK_ProductOrders_Products_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Products",
+                        name: "FK_ProductOrders_BranchProduct_BranchProductId",
+                        column: x => x.BranchProductId,
+                        principalTable: "BranchProduct",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductOrders_Orders_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_ProductOrders_Orders_BranchProductId",
+                        column: x => x.BranchProductId,
                         principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductSales",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BranchProductId = table.Column<int>(nullable: false),
+                    DateId = table.Column<int>(nullable: false),
+                    ExpensesId = table.Column<int>(nullable: true),
+                    ProfitId = table.Column<int>(nullable: true),
+                    RevenueId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductSales", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductSales_BranchProduct_BranchProductId",
+                        column: x => x.BranchProductId,
+                        principalTable: "BranchProduct",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductSales_Dates_DateId",
+                        column: x => x.DateId,
+                        principalTable: "Dates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductSales_Money_ExpensesId",
+                        column: x => x.ExpensesId,
+                        principalTable: "Money",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductSales_Money_ProfitId",
+                        column: x => x.ProfitId,
+                        principalTable: "Money",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductSales_Money_RevenueId",
+                        column: x => x.RevenueId,
+                        principalTable: "Money",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -664,31 +778,62 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Branches_CountryId",
                 table: "Branches",
-                column: "CountryId",
-                unique: true);
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BranchProducts_CostId",
-                table: "BranchProducts",
-                column: "CostId",
-                unique: true);
+                name: "IX_Branches_DateAddedId",
+                table: "Branches",
+                column: "DateAddedId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BranchProducts_ProductId",
-                table: "BranchProducts",
+                name: "IX_Branches_NameId",
+                table: "Branches",
+                column: "NameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branches_OccupancyCostId",
+                table: "Branches",
+                column: "OccupancyCostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branches_PreferredCurrencyId",
+                table: "Branches",
+                column: "PreferredCurrencyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchProduct_BranchId",
+                table: "BranchProduct",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchProduct_CostId",
+                table: "BranchProduct",
+                column: "CostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchProduct_DateAddedId",
+                table: "BranchProduct",
+                column: "DateAddedId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchProduct_ProductId",
+                table: "BranchProduct",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BranchProducts_RetailPriceId",
-                table: "BranchProducts",
-                column: "RetailPriceId",
-                unique: true);
+                name: "IX_BranchProduct_RetailPriceId",
+                table: "BranchProduct",
+                column: "RetailPriceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BranchProducts_StockId",
-                table: "BranchProducts",
-                column: "StockId",
-                unique: true);
+                name: "IX_BranchProduct_StockId",
+                table: "BranchProduct",
+                column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchProduct_SupplierId",
+                table: "BranchProduct",
+                column: "SupplierId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BranchSales_BranchId",
@@ -698,29 +843,22 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BranchSales_DateId",
                 table: "BranchSales",
-                column: "DateId",
-                unique: true);
+                column: "DateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BranchSales_ExpensesId",
                 table: "BranchSales",
-                column: "ExpensesId",
-                unique: true,
-                filter: "[ExpensesId] IS NOT NULL");
+                column: "ExpensesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BranchSales_ProfitId",
                 table: "BranchSales",
-                column: "ProfitId",
-                unique: true,
-                filter: "[ProfitId] IS NOT NULL");
+                column: "ProfitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BranchSales_RevenueId",
                 table: "BranchSales",
-                column: "RevenueId",
-                unique: true,
-                filter: "[RevenueId] IS NOT NULL");
+                column: "RevenueId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BranchSuppliers_SupplierId",
@@ -730,8 +868,12 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Brands_DateAddedId",
                 table: "Brands",
-                column: "DateAddedId",
-                unique: true);
+                column: "DateAddedId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Brands_PreferredCurrencyId",
+                table: "Brands",
+                column: "PreferredCurrencyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BrandSales_BrandId",
@@ -741,41 +883,47 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BrandSales_DateId",
                 table: "BrandSales",
-                column: "DateId",
-                unique: true);
+                column: "DateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BrandSales_ExpensesId",
                 table: "BrandSales",
-                column: "ExpensesId",
-                unique: true,
-                filter: "[ExpensesId] IS NOT NULL");
+                column: "ExpensesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BrandSales_ProfitId",
                 table: "BrandSales",
-                column: "ProfitId",
-                unique: true,
-                filter: "[ProfitId] IS NOT NULL");
+                column: "ProfitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BrandSales_RevenueId",
                 table: "BrandSales",
-                column: "RevenueId",
-                unique: true,
-                filter: "[RevenueId] IS NOT NULL");
+                column: "RevenueId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contracts_ExpirationDateId",
                 table: "Contracts",
-                column: "ExpirationDateId",
-                unique: true);
+                column: "ExpirationDateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contracts_SignedDateId",
                 table: "Contracts",
-                column: "SignedDateId",
-                unique: true);
+                column: "SignedDateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeePresence_ClockInTimeId",
+                table: "EmployeePresence",
+                column: "ClockInTimeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeePresence_ClockOutTimeId",
+                table: "EmployeePresence",
+                column: "ClockOutTimeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeePresence_EmployeeId",
+                table: "EmployeePresence",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_BranchId",
@@ -785,38 +933,42 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_ContractId",
                 table: "Employees",
-                column: "ContractId",
-                unique: true);
+                column: "ContractId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_FirstNameId",
                 table: "Employees",
-                column: "FirstNameId",
-                unique: true);
+                column: "FirstNameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_LastNameId",
                 table: "Employees",
-                column: "LastNameId",
-                unique: true);
+                column: "LastNameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_SalaryId",
                 table: "Employees",
-                column: "SalaryId",
-                unique: true);
+                column: "SalaryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Money_CurrencyId",
                 table: "Money",
-                column: "CurrencyId",
-                unique: true);
+                column: "CurrencyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MoneyPerAmount_AmountId",
+                table: "MoneyPerAmount",
+                column: "AmountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MoneyPerAmount_MoneyId",
+                table: "MoneyPerAmount",
+                column: "MoneyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_AmountId",
                 table: "Orders",
-                column: "AmountId",
-                unique: true);
+                column: "AmountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_BranchId",
@@ -826,20 +978,17 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CostId",
                 table: "Orders",
-                column: "CostId",
-                unique: true);
+                column: "CostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_DeliveryDateId",
                 table: "Orders",
-                column: "DeliveryDateId",
-                unique: true);
+                column: "DeliveryDateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_OrderedDateId",
                 table: "Orders",
-                column: "OrderedDateId",
-                unique: true);
+                column: "OrderedDateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_SupplierId",
@@ -847,58 +996,39 @@ namespace A1_Manager.Migrations
                 column: "SupplierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrders_OrderId",
-                table: "ProductOrders",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Products_BrandId",
                 table: "Products",
                 column: "BrandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_SupplierId",
+                name: "IX_Products_DateAddedId",
                 table: "Products",
-                column: "SupplierId");
+                column: "DateAddedId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductSales_BranchId",
+                name: "IX_ProductSales_BranchProductId",
                 table: "ProductSales",
-                column: "BranchId",
-                unique: true);
+                column: "BranchProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductSales_DateId",
                 table: "ProductSales",
-                column: "DateId",
-                unique: true);
+                column: "DateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductSales_ExpensesId",
                 table: "ProductSales",
-                column: "ExpensesId",
-                unique: true,
-                filter: "[ExpensesId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductSales_ProductId",
-                table: "ProductSales",
-                column: "ProductId",
-                unique: true);
+                column: "ExpensesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductSales_ProfitId",
                 table: "ProductSales",
-                column: "ProfitId",
-                unique: true,
-                filter: "[ProfitId] IS NOT NULL");
+                column: "ProfitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductSales_RevenueId",
                 table: "ProductSales",
-                column: "RevenueId",
-                unique: true,
-                filter: "[RevenueId] IS NOT NULL");
+                column: "RevenueId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_BrandId",
@@ -913,21 +1043,26 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Suppliers_CityId",
                 table: "Suppliers",
-                column: "CityId",
-                unique: true);
+                column: "CityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Suppliers_CountryId",
                 table: "Suppliers",
-                column: "CountryId",
-                unique: true);
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Suppliers_DateAddedId",
+                table: "Suppliers",
+                column: "DateAddedId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Suppliers_IdentityId",
+                table: "Suppliers",
+                column: "IdentityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "BranchProducts");
-
             migrationBuilder.DropTable(
                 name: "BranchSales");
 
@@ -936,6 +1071,9 @@ namespace A1_Manager.Migrations
 
             migrationBuilder.DropTable(
                 name: "BrandSales");
+
+            migrationBuilder.DropTable(
+                name: "EmployeePresence");
 
             migrationBuilder.DropTable(
                 name: "EmployeeRoles");
@@ -956,22 +1094,19 @@ namespace A1_Manager.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "BranchProduct");
 
             migrationBuilder.DropTable(
                 name: "Contracts");
 
             migrationBuilder.DropTable(
-                name: "Identities");
-
-            migrationBuilder.DropTable(
-                name: "Amount");
-
-            migrationBuilder.DropTable(
                 name: "Branches");
 
             migrationBuilder.DropTable(
-                name: "Money");
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "MoneyPerAmount");
 
             migrationBuilder.DropTable(
                 name: "Suppliers");
@@ -980,7 +1115,10 @@ namespace A1_Manager.Migrations
                 name: "Brands");
 
             migrationBuilder.DropTable(
-                name: "Currencies");
+                name: "Amount");
+
+            migrationBuilder.DropTable(
+                name: "Money");
 
             migrationBuilder.DropTable(
                 name: "Cities");
@@ -989,7 +1127,13 @@ namespace A1_Manager.Migrations
                 name: "Countries");
 
             migrationBuilder.DropTable(
+                name: "Identities");
+
+            migrationBuilder.DropTable(
                 name: "Dates");
+
+            migrationBuilder.DropTable(
+                name: "Currencies");
         }
     }
 }

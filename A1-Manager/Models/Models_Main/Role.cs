@@ -15,19 +15,19 @@ namespace A1_Manager.Models_Main
         {
             Employees = new HashSet<EmployeeRole>();
         }
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int NameId { get; set; }
+        public virtual int NameId { get; set; }
 
         [ForeignKey("NameId")]
-        public Identity Name { get; set; }
+        public virtual Identity Name { get; set; }
 
-        public string? Description { get; set; }
+        public virtual string? Description { get; set; }
 
-        public int BrandId { get; set; }
+        public virtual int BrandId { get; set; }
 
-        public Brand Brand { get; set; }
+        public virtual Brand Brand { get; set; }
 
-        public ICollection<EmployeeRole>? Employees { get; set; } 
+        public virtual ICollection<EmployeeRole>? Employees { get; set; } 
     }
 }

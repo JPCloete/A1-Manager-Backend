@@ -17,38 +17,38 @@ namespace A1_Manager.Models_Main
             Products = new HashSet<ProductOrder>();
         }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int OrderStatus { get; set; }
+        public virtual int OrderStatus { get; set; }
 
-        public int SupplierId { get; set; }
+        public virtual int SupplierId { get; set; }
    
         public virtual Supplier Supplier { get; set; }
 
-        public int BranchId { get; set; }
+        public virtual int BranchId { get; set; }
 
         public virtual Branch Branch { get; set; }
 
-        public int OrderedDateId { get; set; }
+        public virtual int OrderedDateId { get; set; }
 
         [ForeignKey("OrderedDateId")]
-        public Date OrderedDate { get; set; }
+        public virtual Date OrderedDate { get; set; }
 
-        public int DeliveryDateId { get; set; }
+        public virtual int DeliveryDateId { get; set; }
 
         [ForeignKey("DeliveryDateId")]
-        public Date DeliveryDate { get; set; }
+        public virtual Date DeliveryDate { get; set; }
 
-        public int AmountId { get; set; }
+        public virtual int AmountId { get; set; }
 
         [ForeignKey("AmountId")]
-        public Amount Amount { get; set; }
+        public virtual Amount Amount { get; set; }
 
-        public int CostId { get; set; }
+        public virtual int CostId { get; set; }
 
         [ForeignKey("CostId")]
         public virtual Money Cost { get; set; }
 
-        public ICollection<ProductOrder> Products { get; set; }
+        public virtual ICollection<ProductOrder> Products { get; set; }
     }
 }

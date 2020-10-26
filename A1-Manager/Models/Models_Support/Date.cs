@@ -8,8 +8,8 @@ namespace A1_Manager.Models_Support
 {
     public class Date : IDate
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public DateTime Time { get; set; }
+        public virtual string Time { get; set; }
     }
 }
