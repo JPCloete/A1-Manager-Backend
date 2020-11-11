@@ -61,7 +61,7 @@ namespace A1_Manager.Services
             var dbCurrencies = await _db.Currencies
                 .ToListAsync();
             
-            if(dbCurrencies != null)
+                if(dbCurrencies.Count != 0)
             {
                 return "Invalid Request";
             }
@@ -96,7 +96,7 @@ namespace A1_Manager.Services
             var dbCountries = await _db.Countries
                 .ToListAsync();
 
-            if (dbCountries != null)
+            if (dbCountries.Count != 0)
             {
                 return "Invalid Request";
             }

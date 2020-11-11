@@ -68,10 +68,10 @@ namespace A1_Manager.Migrations
 
             modelBuilder.Entity("A1_Manager.Models_Joins.EmployeeRole", b =>
                 {
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
                     b.HasKey("EmployeeId", "RoleId");
@@ -81,10 +81,10 @@ namespace A1_Manager.Migrations
 
             modelBuilder.Entity("A1_Manager.Models_Joins.ProductOrder", b =>
                 {
-                    b.Property<int>("BranchProductId")
+                    b.Property<int?>("BranchProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.HasKey("BranchProductId", "OrderId");
@@ -164,7 +164,7 @@ namespace A1_Manager.Migrations
                     b.Property<int>("DateAddedId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("RetailPriceId")
@@ -351,7 +351,9 @@ namespace A1_Manager.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("ContractId");
+                    b.HasIndex("ContractId")
+                        .IsUnique()
+                        .HasFilter("[ContractId] IS NOT NULL");
 
                     b.HasIndex("FirstNameId");
 
@@ -763,7 +765,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Role", "Role")
                         .WithMany("Employees")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -772,13 +774,13 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.BranchProduct", "BranchProduct")
                         .WithMany("Orders")
                         .HasForeignKey("BranchProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Main.Order", "Order")
                         .WithMany("Products")
                         .HasForeignKey("BranchProductId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -832,7 +834,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Branch", "Branch")
                         .WithMany("Products")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Cost")
@@ -850,8 +852,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Product", "Product")
                         .WithMany("Branches")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("A1_Manager.Models_Support.MoneyPerAmount", "RetailPrice")
                         .WithMany()
@@ -968,8 +969,9 @@ namespace A1_Manager.Migrations
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.Contract", "Contract")
-                        .WithMany()
-                        .HasForeignKey("ContractId");
+                        .WithOne()
+                        .HasForeignKey("A1_Manager.Models_Main.Employee", "ContractId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("A1_Manager.Models_Support.Identity", "FirstName")
                         .WithMany()

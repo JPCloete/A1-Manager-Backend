@@ -2,7 +2,7 @@
 
 namespace A1_Manager.Migrations
 {
-    public partial class InitCommit : Migration
+    public partial class InitMigrationTest : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -522,7 +522,7 @@ namespace A1_Manager.Migrations
                         column: x => x.ContractId,
                         principalTable: "Contracts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Employees_Identities_FirstNameId",
                         column: x => x.FirstNameId,
@@ -597,7 +597,7 @@ namespace A1_Manager.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(nullable: false),
+                    ProductId = table.Column<int>(nullable: true),
                     DateAddedId = table.Column<int>(nullable: false),
                     SupplierId = table.Column<int>(nullable: false),
                     CostId = table.Column<int>(nullable: false),
@@ -614,7 +614,7 @@ namespace A1_Manager.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BranchProduct_Money_CostId",
                         column: x => x.CostId,
@@ -632,7 +632,7 @@ namespace A1_Manager.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BranchProduct_MoneyPerAmount_RetailPriceId",
                         column: x => x.RetailPriceId,
@@ -707,7 +707,7 @@ namespace A1_Manager.Migrations
                         column: x => x.EmployeeId,
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -725,13 +725,13 @@ namespace A1_Manager.Migrations
                         column: x => x.BranchProductId,
                         principalTable: "BranchProduct",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ProductOrders_Orders_BranchProductId",
                         column: x => x.BranchProductId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -971,7 +971,9 @@ namespace A1_Manager.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_ContractId",
                 table: "Employees",
-                column: "ContractId");
+                column: "ContractId",
+                unique: true,
+                filter: "[ContractId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_FirstNameId",

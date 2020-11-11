@@ -44,12 +44,12 @@ namespace A1_Manager.ApplicationDbContext
                 bs.HasOne(x => x.Employee)
                     .WithMany(y => y.Roles)
                     .HasForeignKey(x => x.EmployeeId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 bs.HasOne(x => x.Role)
                     .WithMany(y => y.Employees)
                     .HasForeignKey(x => x.RoleId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<ProductOrder>(bp =>
@@ -59,12 +59,12 @@ namespace A1_Manager.ApplicationDbContext
                 bp.HasOne(x => x.BranchProduct)
                     .WithMany(y => y.Orders)
                     .HasForeignKey(x => x.BranchProductId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 bp.HasOne(x => x.Order)
                     .WithMany(y => y.Products)
                     .HasForeignKey(x => x.OrderId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Amount>(a =>
@@ -84,7 +84,7 @@ namespace A1_Manager.ApplicationDbContext
                 b.HasMany(x => x.Sales)
                     .WithOne(y => y.Branch)
                     .HasForeignKey(x => x.BranchId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 b.HasMany(x => x.Employees)
                     .WithOne(y => y.Branch)
@@ -104,7 +104,7 @@ namespace A1_Manager.ApplicationDbContext
                 b.HasMany(x => x.Products)
                     .WithOne(y => y.Branch)
                     .HasForeignKey(y => y.BranchId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 b.HasOne(x => x.City)
                     .WithMany()
@@ -138,12 +138,12 @@ namespace A1_Manager.ApplicationDbContext
                 bp.HasOne(x => x.Branch)
                     .WithMany(y => y.Products)
                     .HasForeignKey(x => x.BranchId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 bp.HasOne(x => x.Product)
                     .WithMany(y => y.Branches)
                     .HasForeignKey(x => x.ProductId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 bp.HasMany(x => x.Sales)
                     .WithOne(y => y.BranchProduct)
@@ -312,6 +312,10 @@ namespace A1_Manager.ApplicationDbContext
                     .HasForeignKey(x => x.EmployeeId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+                e.HasOne(x => x.Contract)
+                    .WithOne()
+                    .OnDelete(DeleteBehavior.Cascade);
+
                 e.HasOne(x => x.FirstName)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
@@ -387,7 +391,7 @@ namespace A1_Manager.ApplicationDbContext
                 o.HasMany(x => x.Products)
                     .WithOne(y => y.Order)
                     .HasForeignKey(x => x.BranchProductId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 o.HasOne(x => x.MoneyPerAmount)
                     .WithMany()
@@ -409,7 +413,7 @@ namespace A1_Manager.ApplicationDbContext
                 p.HasMany(x => x.Branches)
                     .WithOne(y => y.Product)
                     .HasForeignKey(x => x.ProductId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 p.HasOne(x => x.Brand)
                     .WithMany(y => y.Products)
@@ -454,7 +458,7 @@ namespace A1_Manager.ApplicationDbContext
                 r.HasMany(x => x.Employees)
                     .WithOne(y => y.Role)
                     .HasForeignKey(x => x.EmployeeId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 r.HasOne(x => x.Brand)
                     .WithMany(y => y.Roles)

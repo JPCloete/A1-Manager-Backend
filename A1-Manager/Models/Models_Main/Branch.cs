@@ -60,14 +60,14 @@ namespace A1_Manager.Models_Main
 
         public virtual Brand Brand { get; set; }
 
-        public virtual ICollection<BranchSupplier> Suppliers { get; set; }
+        public virtual ICollection<BranchSupplier>? Suppliers { get; set; }
 
-        public virtual ICollection<BranchProduct> Products { get; set; }
+        public virtual ICollection<BranchProduct>? Products { get; set; }
 
-        public virtual ICollection<BranchSale> Sales { get; set; }
+        public virtual ICollection<BranchSale>? Sales { get; set; }
 
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Employee>? Employees { get; set; }
 
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order>? Orders { get; set; }
     }
 }

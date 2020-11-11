@@ -204,6 +204,8 @@ namespace A1_Manager.Controllers
             var originalEmployee = await _db.Employees
                 .Where(x => x.Id == employee.Id)
                 .Include(y => y.Contract)
+                .Include(x => x.Contract.SignedDate)
+                .Include(y => y.Contract.ExpirationDate)
                 .FirstOrDefaultAsync();
 
             if(originalEmployee != null)
@@ -293,6 +295,30 @@ namespace A1_Manager.Controllers
                     .FirstOrDefaultAsync();
 
                 return _serialization.SerializeObject(updatedEmployee);
+            }
+
+            return _serialization.SerializeMessage(404, "Not Found");
+        }
+
+        [HttpDelete]
+        [Route("/employee")]
+        public async Task<string> DeleteEmployeeAsync([FromQuery] int id)
+        {
+            if(id == 0)
+            {
+                return _serialization.SerializeMessage(404, "Invalid Request");
+            }
+
+            Employee employee = await _db.Employees
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            if(employee != null)
+            {
+                _db.Employees.Remove(employee);
+                await _db.SaveChangesAsync();
+
+                return "Success";
             }
 
             return _serialization.SerializeMessage(404, "Not Found");
