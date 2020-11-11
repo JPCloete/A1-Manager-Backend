@@ -20,10 +20,10 @@ namespace A1_Manager.Models_Main
 
         public virtual int Id { get; set; }
 
-        public virtual int IdentityId { get; set; }
+        public virtual int NameId { get; set; }
 
         [ForeignKey("IdentityId")]
-        public virtual Identity Identity { get; set; }
+        public virtual Identity Name { get; set; }
 
         public virtual string Email { get; set; }
 

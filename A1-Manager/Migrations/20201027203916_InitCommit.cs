@@ -2,7 +2,7 @@
 
 namespace A1_Manager.Migrations
 {
-    public partial class InitMigration : Migration
+    public partial class InitCommit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -169,7 +169,8 @@ namespace A1_Manager.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdentityId = table.Column<int>(nullable: false),
+                    NameId = table.Column<int>(nullable: false),
+                    IdentityId = table.Column<int>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Telephone = table.Column<string>(nullable: true),
                     DateAddedId = table.Column<int>(nullable: false),
@@ -257,7 +258,7 @@ namespace A1_Manager.Migrations
                         column: x => x.BrandId,
                         principalTable: "Brands",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Branches_Cities_CityId",
                         column: x => x.CityId,
@@ -306,7 +307,8 @@ namespace A1_Manager.Migrations
                     BrandId = table.Column<int>(nullable: false),
                     ExpensesId = table.Column<int>(nullable: true),
                     ProfitId = table.Column<int>(nullable: true),
-                    RevenueId = table.Column<int>(nullable: true)
+                    RevenueId = table.Column<int>(nullable: true),
+                    TaxId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -341,6 +343,12 @@ namespace A1_Manager.Migrations
                         principalTable: "Money",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BrandSales_Money_TaxId",
+                        column: x => x.TaxId,
+                        principalTable: "Money",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -364,7 +372,7 @@ namespace A1_Manager.Migrations
                         column: x => x.BrandId,
                         principalTable: "Brands",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Products_Dates_DateAddedId",
                         column: x => x.DateAddedId,
@@ -391,7 +399,7 @@ namespace A1_Manager.Migrations
                         column: x => x.BrandId,
                         principalTable: "Brands",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Roles_Identities_NameId",
                         column: x => x.NameId,
@@ -410,7 +418,8 @@ namespace A1_Manager.Migrations
                     BranchId = table.Column<int>(nullable: false),
                     ExpensesId = table.Column<int>(nullable: true),
                     ProfitId = table.Column<int>(nullable: true),
-                    RevenueId = table.Column<int>(nullable: true)
+                    RevenueId = table.Column<int>(nullable: true),
+                    TaxId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -445,6 +454,12 @@ namespace A1_Manager.Migrations
                         principalTable: "Money",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BranchSales_Money_TaxId",
+                        column: x => x.TaxId,
+                        principalTable: "Money",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -452,7 +467,8 @@ namespace A1_Manager.Migrations
                 columns: table => new
                 {
                     BranchId = table.Column<int>(nullable: false),
-                    SupplierId = table.Column<int>(nullable: false)
+                    SupplierId = table.Column<int>(nullable: false),
+                    ContractId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -462,7 +478,13 @@ namespace A1_Manager.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BranchSuppliers_Contracts_ContractId",
+                        column: x => x.ContractId,
+                        principalTable: "Contracts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BranchSuppliers_Suppliers_SupplierId",
                         column: x => x.SupplierId,
@@ -494,7 +516,7 @@ namespace A1_Manager.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Employees_Contracts_ContractId",
                         column: x => x.ContractId,
@@ -532,34 +554,27 @@ namespace A1_Manager.Migrations
                     BranchId = table.Column<int>(nullable: false),
                     OrderedDateId = table.Column<int>(nullable: false),
                     DeliveryDateId = table.Column<int>(nullable: false),
-                    AmountId = table.Column<int>(nullable: false),
-                    CostId = table.Column<int>(nullable: false)
+                    MoneyPerAmountId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Amount_AmountId",
-                        column: x => x.AmountId,
-                        principalTable: "Amount",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Orders_Branches_BranchId",
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Orders_Money_CostId",
-                        column: x => x.CostId,
-                        principalTable: "Money",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Orders_Dates_DeliveryDateId",
                         column: x => x.DeliveryDateId,
                         principalTable: "Dates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_MoneyPerAmount_MoneyPerAmountId",
+                        column: x => x.MoneyPerAmountId,
+                        principalTable: "MoneyPerAmount",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -573,7 +588,7 @@ namespace A1_Manager.Migrations
                         column: x => x.SupplierId,
                         principalTable: "Suppliers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -587,6 +602,7 @@ namespace A1_Manager.Migrations
                     SupplierId = table.Column<int>(nullable: false),
                     CostId = table.Column<int>(nullable: false),
                     RetailPriceId = table.Column<int>(nullable: false),
+                    TaxPercentage = table.Column<int>(nullable: false),
                     StockId = table.Column<int>(nullable: false),
                     BranchId = table.Column<int>(nullable: false)
                 },
@@ -598,7 +614,7 @@ namespace A1_Manager.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BranchProduct_Money_CostId",
                         column: x => x.CostId,
@@ -616,7 +632,7 @@ namespace A1_Manager.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BranchProduct_MoneyPerAmount_RetailPriceId",
                         column: x => x.RetailPriceId,
@@ -667,7 +683,7 @@ namespace A1_Manager.Migrations
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -691,7 +707,7 @@ namespace A1_Manager.Migrations
                         column: x => x.EmployeeId,
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -709,13 +725,13 @@ namespace A1_Manager.Migrations
                         column: x => x.BranchProductId,
                         principalTable: "BranchProduct",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProductOrders_Orders_BranchProductId",
                         column: x => x.BranchProductId,
                         principalTable: "Orders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -728,7 +744,8 @@ namespace A1_Manager.Migrations
                     DateId = table.Column<int>(nullable: false),
                     ExpensesId = table.Column<int>(nullable: true),
                     ProfitId = table.Column<int>(nullable: true),
-                    RevenueId = table.Column<int>(nullable: true)
+                    RevenueId = table.Column<int>(nullable: true),
+                    TaxId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -760,6 +777,12 @@ namespace A1_Manager.Migrations
                     table.ForeignKey(
                         name: "FK_ProductSales_Money_RevenueId",
                         column: x => x.RevenueId,
+                        principalTable: "Money",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductSales_Money_TaxId",
+                        column: x => x.TaxId,
                         principalTable: "Money",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -861,6 +884,16 @@ namespace A1_Manager.Migrations
                 column: "RevenueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BranchSales_TaxId",
+                table: "BranchSales",
+                column: "TaxId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchSuppliers_ContractId",
+                table: "BranchSuppliers",
+                column: "ContractId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BranchSuppliers_SupplierId",
                 table: "BranchSuppliers",
                 column: "SupplierId");
@@ -899,6 +932,11 @@ namespace A1_Manager.Migrations
                 name: "IX_BrandSales_RevenueId",
                 table: "BrandSales",
                 column: "RevenueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BrandSales_TaxId",
+                table: "BrandSales",
+                column: "TaxId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contracts_ExpirationDateId",
@@ -966,24 +1004,19 @@ namespace A1_Manager.Migrations
                 column: "MoneyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_AmountId",
-                table: "Orders",
-                column: "AmountId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Orders_BranchId",
                 table: "Orders",
                 column: "BranchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_CostId",
-                table: "Orders",
-                column: "CostId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Orders_DeliveryDateId",
                 table: "Orders",
                 column: "DeliveryDateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_MoneyPerAmountId",
+                table: "Orders",
+                column: "MoneyPerAmountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_OrderedDateId",
@@ -1029,6 +1062,11 @@ namespace A1_Manager.Migrations
                 name: "IX_ProductSales_RevenueId",
                 table: "ProductSales",
                 column: "RevenueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductSales_TaxId",
+                table: "ProductSales",
+                column: "TaxId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_BrandId",

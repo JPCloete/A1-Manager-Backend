@@ -54,7 +54,12 @@ namespace A1_Manager.Migrations
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ContractId")
+                        .HasColumnType("int");
+
                     b.HasKey("BranchId", "SupplierId");
+
+                    b.HasIndex("ContractId");
 
                     b.HasIndex("SupplierId");
 
@@ -171,6 +176,9 @@ namespace A1_Manager.Migrations
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TaxPercentage")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
@@ -212,6 +220,9 @@ namespace A1_Manager.Migrations
                     b.Property<int?>("RevenueId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
@@ -223,6 +234,8 @@ namespace A1_Manager.Migrations
                     b.HasIndex("ProfitId");
 
                     b.HasIndex("RevenueId");
+
+                    b.HasIndex("TaxId");
 
                     b.ToTable("BranchSales");
                 });
@@ -283,6 +296,9 @@ namespace A1_Manager.Migrations
                     b.Property<int?>("RevenueId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
@@ -294,6 +310,8 @@ namespace A1_Manager.Migrations
                     b.HasIndex("ProfitId");
 
                     b.HasIndex("RevenueId");
+
+                    b.HasIndex("TaxId");
 
                     b.ToTable("BrandSales");
                 });
@@ -351,16 +369,13 @@ namespace A1_Manager.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AmountId")
-                        .HasColumnType("int");
-
                     b.Property<int>("BranchId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CostId")
+                    b.Property<int>("DeliveryDateId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DeliveryDateId")
+                    b.Property<int>("MoneyPerAmountId")
                         .HasColumnType("int");
 
                     b.Property<int>("OrderStatus")
@@ -374,13 +389,11 @@ namespace A1_Manager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AmountId");
-
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("CostId");
-
                     b.HasIndex("DeliveryDateId");
+
+                    b.HasIndex("MoneyPerAmountId");
 
                     b.HasIndex("OrderedDateId");
 
@@ -445,6 +458,9 @@ namespace A1_Manager.Migrations
                     b.Property<int?>("RevenueId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BranchProductId");
@@ -456,6 +472,8 @@ namespace A1_Manager.Migrations
                     b.HasIndex("ProfitId");
 
                     b.HasIndex("RevenueId");
+
+                    b.HasIndex("TaxId");
 
                     b.ToTable("ProductSales");
                 });
@@ -507,7 +525,10 @@ namespace A1_Manager.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IdentityId")
+                    b.Property<int?>("IdentityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NameId")
                         .HasColumnType("int");
 
                     b.Property<string>("Telephone")
@@ -706,7 +727,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Employee", "Employee")
                         .WithMany("Presence")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -715,7 +736,13 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Branch", "Branch")
                         .WithMany("Suppliers")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("A1_Manager.Models_Support.Contract", "Contract")
+                        .WithMany()
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Main.Supplier", "Supplier")
@@ -736,7 +763,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Role", "Role")
                         .WithMany("Employees")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 
@@ -745,13 +772,13 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.BranchProduct", "BranchProduct")
                         .WithMany("Orders")
                         .HasForeignKey("BranchProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Main.Order", "Order")
                         .WithMany("Products")
                         .HasForeignKey("BranchProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 
@@ -760,7 +787,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Brand", "Brand")
                         .WithMany("Branches")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.City", "City")
@@ -805,7 +832,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Branch", "Branch")
                         .WithMany("Products")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Cost")
@@ -823,7 +850,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Product", "Product")
                         .WithMany("Branches")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.MoneyPerAmount", "RetailPrice")
@@ -861,15 +888,24 @@ namespace A1_Manager.Migrations
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Expenses")
                         .WithMany()
-                        .HasForeignKey("ExpensesId");
+                        .HasForeignKey("ExpensesId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Profit")
                         .WithMany()
-                        .HasForeignKey("ProfitId");
+                        .HasForeignKey("ProfitId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Revenue")
                         .WithMany()
-                        .HasForeignKey("RevenueId");
+                        .HasForeignKey("RevenueId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("A1_Manager.Models_Support.Money", "Tax")
+                        .WithMany()
+                        .HasForeignKey("TaxId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("A1_Manager.Models_Main.Brand", b =>
@@ -903,15 +939,24 @@ namespace A1_Manager.Migrations
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Expenses")
                         .WithMany()
-                        .HasForeignKey("ExpensesId");
+                        .HasForeignKey("ExpensesId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Profit")
                         .WithMany()
-                        .HasForeignKey("ProfitId");
+                        .HasForeignKey("ProfitId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Revenue")
                         .WithMany()
-                        .HasForeignKey("RevenueId");
+                        .HasForeignKey("RevenueId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("A1_Manager.Models_Support.Money", "Tax")
+                        .WithMany()
+                        .HasForeignKey("TaxId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("A1_Manager.Models_Main.Employee", b =>
@@ -919,7 +964,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Branch", "Branch")
                         .WithMany("Employees")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.Contract", "Contract")
@@ -947,27 +992,21 @@ namespace A1_Manager.Migrations
 
             modelBuilder.Entity("A1_Manager.Models_Main.Order", b =>
                 {
-                    b.HasOne("A1_Manager.Models_Support.Amount", "Amount")
-                        .WithMany()
-                        .HasForeignKey("AmountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("A1_Manager.Models_Main.Branch", "Branch")
                         .WithMany("Orders")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("A1_Manager.Models_Support.Money", "Cost")
-                        .WithMany()
-                        .HasForeignKey("CostId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.Date", "DeliveryDate")
                         .WithMany()
                         .HasForeignKey("DeliveryDateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("A1_Manager.Models_Support.MoneyPerAmount", "MoneyPerAmount")
+                        .WithMany()
+                        .HasForeignKey("MoneyPerAmountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -980,7 +1019,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Supplier", "Supplier")
                         .WithMany("Orders")
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -989,7 +1028,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.Date", "DateAdded")
@@ -1015,15 +1054,24 @@ namespace A1_Manager.Migrations
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Expenses")
                         .WithMany()
-                        .HasForeignKey("ExpensesId");
+                        .HasForeignKey("ExpensesId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Profit")
                         .WithMany()
-                        .HasForeignKey("ProfitId");
+                        .HasForeignKey("ProfitId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("A1_Manager.Models_Support.Money", "Revenue")
                         .WithMany()
-                        .HasForeignKey("RevenueId");
+                        .HasForeignKey("RevenueId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("A1_Manager.Models_Support.Money", "Tax")
+                        .WithMany()
+                        .HasForeignKey("TaxId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("A1_Manager.Models_Main.Role", b =>
@@ -1031,7 +1079,7 @@ namespace A1_Manager.Migrations
                     b.HasOne("A1_Manager.Models_Main.Brand", "Brand")
                         .WithMany("Roles")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A1_Manager.Models_Support.Identity", "Name")
@@ -1061,11 +1109,10 @@ namespace A1_Manager.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("A1_Manager.Models_Support.Identity", "Identity")
+                    b.HasOne("A1_Manager.Models_Support.Identity", "Name")
                         .WithMany()
                         .HasForeignKey("IdentityId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("A1_Manager.Models_Support.Contract", b =>

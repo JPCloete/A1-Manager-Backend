@@ -19,14 +19,7 @@ namespace A1_Manager.ApplicationDbContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //https://stackoverflow.com/questions/46526230/disable-cascade-delete-on-ef-core-2-globally
-            var cascadeFKs = modelBuilder.Model.GetEntityTypes()
-                .SelectMany(t => t.GetForeignKeys())
-                .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
-
-            foreach (var fk in cascadeFKs)
-                fk.DeleteBehavior = DeleteBehavior.Restrict;
-
+           
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<BranchSupplier>(bp =>
@@ -35,11 +28,13 @@ namespace A1_Manager.ApplicationDbContext
 
                 bp.HasOne(x => x.Branch)
                     .WithMany(y => y.Suppliers)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 bp.HasOne(x => x.Supplier)
                     .WithMany(y => y.Branches)
-                    .HasForeignKey(x => x.SupplierId);
+                    .HasForeignKey(x => x.SupplierId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<EmployeeRole>(bs =>
@@ -48,11 +43,13 @@ namespace A1_Manager.ApplicationDbContext
 
                 bs.HasOne(x => x.Employee)
                     .WithMany(y => y.Roles)
-                    .HasForeignKey(x => x.EmployeeId);
+                    .HasForeignKey(x => x.EmployeeId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 bs.HasOne(x => x.Role)
                     .WithMany(y => y.Employees)
-                    .HasForeignKey(x => x.RoleId);
+                    .HasForeignKey(x => x.RoleId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<ProductOrder>(bp =>
@@ -61,11 +58,13 @@ namespace A1_Manager.ApplicationDbContext
 
                 bp.HasOne(x => x.BranchProduct)
                     .WithMany(y => y.Orders)
-                    .HasForeignKey(x => x.BranchProductId);
+                    .HasForeignKey(x => x.BranchProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 bp.HasOne(x => x.Order)
                     .WithMany(y => y.Products)
-                    .HasForeignKey(x => x.OrderId);
+                    .HasForeignKey(x => x.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Amount>(a =>
@@ -79,27 +78,57 @@ namespace A1_Manager.ApplicationDbContext
 
                 b.HasOne(x => x.Brand)
                     .WithMany(y => y.Branches)
-                    .HasForeignKey(x => x.BrandId);
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasMany(x => x.Sales)
                     .WithOne(y => y.Branch)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 b.HasMany(x => x.Employees)
                     .WithOne(y => y.Branch)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasMany(x => x.Orders)
                     .WithOne(y => y.Branch)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasMany(x => x.Suppliers)
                     .WithOne(y => y.Branch)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasMany(x => x.Products)
                     .WithOne(y => y.Branch)
-                    .HasForeignKey(y => y.BranchId);
+                    .HasForeignKey(y => y.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne(x => x.City)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.Country)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.PreferredCurrency)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.DateAdded)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.Name)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.OccupancyCost)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<BranchProduct>(bp =>
@@ -108,15 +137,34 @@ namespace A1_Manager.ApplicationDbContext
 
                 bp.HasOne(x => x.Branch)
                     .WithMany(y => y.Products)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 bp.HasOne(x => x.Product)
                     .WithMany(y => y.Branches)
-                    .HasForeignKey(x => x.ProductId);
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 bp.HasMany(x => x.Sales)
                     .WithOne(y => y.BranchProduct)
-                    .HasForeignKey(x => x.BranchProductId);
+                    .HasForeignKey(x => x.BranchProductId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bp.HasOne(x => x.Stock)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bp.HasOne(x => x.DateAdded)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bp.HasOne(x => x.Cost)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bp.HasOne(x => x.RetailPrice)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<BranchSale>(bs =>
@@ -125,7 +173,28 @@ namespace A1_Manager.ApplicationDbContext
 
                 bs.HasOne(x => x.Branch)
                     .WithMany(y => y.Sales)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Date)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Expenses)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Profit)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Revenue)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Tax)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Brand>(b =>
@@ -134,19 +203,31 @@ namespace A1_Manager.ApplicationDbContext
 
                 b.HasMany(x => x.Branches)
                     .WithOne(y => y.Brand)
-                    .HasForeignKey(x => x.BrandId);
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasMany(x => x.Products)
                     .WithOne(y => y.Brand)
-                    .HasForeignKey(x => x.BrandId);
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasMany(x => x.BrandSales)
                     .WithOne(y => y.Brand)
-                    .HasForeignKey(x => x.BrandId);
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasMany(x => x.Roles)
                     .WithOne(y => y.Brand)
-                    .HasForeignKey(x => x.BrandId);
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne(x => x.PreferredCurrency)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.DateAdded)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<BrandSale>(bs =>
@@ -155,7 +236,28 @@ namespace A1_Manager.ApplicationDbContext
 
                 bs.HasOne(x => x.Brand)
                     .WithMany(y => y.BrandSales)
-                    .HasForeignKey(x => x.BrandId);
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Date)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Expenses)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Profit)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Revenue)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                bs.HasOne(x => x.Tax)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<City>(c =>
@@ -166,9 +268,22 @@ namespace A1_Manager.ApplicationDbContext
             modelBuilder.Entity<Contract>(c =>
             {
                 c.HasKey(x => x.Id);
+
+                c.HasOne(x => x.SignedDate)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                c.HasOne(x => x.ExpirationDate)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Country>(c =>
+            {
+                c.HasKey(x => x.Id);
+            });
+
+            modelBuilder.Entity<Currency>(c =>
             {
                 c.HasKey(x => x.Id);
             });
@@ -184,15 +299,30 @@ namespace A1_Manager.ApplicationDbContext
 
                 e.HasOne(x => x.Branch)
                     .WithMany(y => y.Employees)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasMany(x => x.Roles)
                     .WithOne(y => y.Employee)
-                    .HasForeignKey(x => x.EmployeeId);
+                    .HasForeignKey(x => x.EmployeeId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 e.HasMany(x => x.Presence)
                     .WithOne(y => y.Employee)
-                    .HasForeignKey(x => x.EmployeeId);
+                    .HasForeignKey(x => x.EmployeeId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.FirstName)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(x => x.LastName)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(x => x.Salary)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<EmployeePresence>(ep =>
@@ -201,7 +331,16 @@ namespace A1_Manager.ApplicationDbContext
 
                 ep.HasOne(x => x.Employee)
                     .WithMany(y => y.Presence)
-                    .HasForeignKey(x => x.EmployeeId);
+                    .HasForeignKey(x => x.EmployeeId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                ep.HasOne(x => x.ClockInTime)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                ep.HasOne(x => x.ClockOutTime)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Identity>(i =>
@@ -212,6 +351,23 @@ namespace A1_Manager.ApplicationDbContext
             modelBuilder.Entity<Money>(m =>
             {
                 m.HasKey(x => x.Id);
+
+                m.HasOne(x => x.Currency)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<MoneyPerAmount>(mpa =>
+            {
+                mpa.HasKey(x => x.Id);
+
+                mpa.HasOne(x => x.Amount)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                mpa.HasOne(x => x.Money)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Order>(o =>
@@ -220,15 +376,30 @@ namespace A1_Manager.ApplicationDbContext
 
                 o.HasOne(x => x.Supplier)
                     .WithMany(y => y.Orders)
-                    .HasForeignKey(x => x.SupplierId);
+                    .HasForeignKey(x => x.SupplierId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 o.HasOne(x => x.Branch)
                     .WithMany(y => y.Orders)
-                    .HasForeignKey(x => x.BranchId);
+                    .HasForeignKey(x => x.BranchId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 o.HasMany(x => x.Products)
                     .WithOne(y => y.Order)
-                    .HasForeignKey(x => x.BranchProductId);
+                    .HasForeignKey(x => x.BranchProductId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                o.HasOne(x => x.MoneyPerAmount)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                o.HasOne(x => x.OrderedDate)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                o.HasOne(x => x.DeliveryDate)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Product>(p =>
@@ -237,16 +408,43 @@ namespace A1_Manager.ApplicationDbContext
 
                 p.HasMany(x => x.Branches)
                     .WithOne(y => y.Product)
-                    .HasForeignKey(x => x.ProductId);
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 p.HasOne(x => x.Brand)
                     .WithMany(y => y.Products)
-                    .HasForeignKey(x => x.BrandId);
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                p.HasOne(x => x.DateAdded)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
             });
 
             modelBuilder.Entity<ProductSale>(ps =>
             {
                 ps.HasKey(x => x.Id);
+
+                ps.HasOne(x => x.Date)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                ps.HasOne(x => x.Expenses)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                ps.HasOne(x => x.Profit)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                ps.HasOne(x => x.Revenue)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                ps.HasOne(x => x.Tax)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Role>(r =>
@@ -255,7 +453,17 @@ namespace A1_Manager.ApplicationDbContext
 
                 r.HasMany(x => x.Employees)
                     .WithOne(y => y.Role)
-                    .HasForeignKey(x => x.EmployeeId);
+                    .HasForeignKey(x => x.EmployeeId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                r.HasOne(x => x.Brand)
+                    .WithMany(y => y.Roles)
+                    .HasForeignKey(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                r.HasOne(x => x.Name)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<Supplier>(s =>
@@ -264,15 +472,34 @@ namespace A1_Manager.ApplicationDbContext
 
                 s.HasMany(x => x.Orders)
                     .WithOne(y => y.Supplier)
-                    .HasForeignKey(x => x.SupplierId);
+                    .HasForeignKey(x => x.SupplierId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 s.HasMany(x => x.Branches)
                     .WithOne(y => y.Supplier)
-                    .HasForeignKey(x => x.SupplierId);
+                    .HasForeignKey(x => x.SupplierId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 s.HasMany(x => x.Products)
                     .WithOne(y => y.Supplier)
-                    .HasForeignKey(x => x.SupplierId);
+                    .HasForeignKey(x => x.SupplierId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                s.HasOne(x => x.City)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                s.HasOne(x => x.Country)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                s.HasOne(x => x.DateAdded)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                s.HasOne(x => x.Name)
+                    .WithMany()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
 

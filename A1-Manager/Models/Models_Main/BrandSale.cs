@@ -36,5 +36,10 @@ namespace A1_Manager.Models_Main
 
         [ForeignKey("RevenueId")]
         public virtual Money? Revenue { get; set; }
+
+        public virtual int TaxId { get; set; }
+
+        [ForeignKey("TaxId")]
+        public virtual Money? Tax { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace A1_Manager.Controllers
         }
 
         [HttpPost]
-        [Route("branch")]
+        [Route("/branch")]
         public async Task<string> AddBranchAsync([FromBody] Branch branch)
         {
             if (string.IsNullOrEmpty(branch.Name.Name) || string.IsNullOrEmpty(branch.City.Name) ||
@@ -108,7 +108,7 @@ namespace A1_Manager.Controllers
             branch.DateAddedId = dateId;
 
             var isDuplicateBranch = await _db.Branches
-                .Where(x => x.Name == branch.Name)
+                .Where(x => x.NameId == branch.NameId)
                 .Where(x => x.CountryId == branch.CountryId)
                 .Where(y => y.CityId == branch.CityId)
                 .Where(x => x.Address == branch.Address)
@@ -122,7 +122,21 @@ namespace A1_Manager.Controllers
             await _db.Branches.AddAsync(branch);
             await _db.SaveChangesAsync();
 
-            return "Success";
+            var newlyAddedBranch = await _db.Branches
+                .Where(x => x.Id == branch.Id)
+                .Include(y => y.Country)
+                .Include(x => x.City)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Name.Name,
+                    Country = x.Country.Name,
+                    City = x.City.Name,
+                    x.Address
+                })
+                .FirstOrDefaultAsync();
+
+            return _serialization.SerializeObject(newlyAddedBranch);
         }
 
         [HttpGet]
@@ -134,10 +148,30 @@ namespace A1_Manager.Controllers
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
 
-            Branch branch = await _db.Branches
+            var branch = await _db.Branches
                 .Where(x => x.Id == id)
                 .Include(y => y.Country)
                 .Include(x => x.City)
+                .Include(y => y.Name)
+                .Select(y => new
+                {
+                    y.Id,
+                    y.Name.Name,
+                    y.Email,
+                    y.Telephone,
+                    DateAdded = y.DateAdded.Time,
+                    Location = new
+                    {
+                        Country = y.Country.Name,
+                        City = y.City.Name,
+                        y.Address
+                    },
+                    OccupancyCost = new 
+                    {
+                        Currency = y.PreferredCurrency.Symbol,
+                        Cost = y.OccupancyCost.Amount
+                    }
+                })
                 .FirstOrDefaultAsync();
 
             if (branch != null)
@@ -152,7 +186,7 @@ namespace A1_Manager.Controllers
         [Route("/branches")]
         public async Task<string> GetBranchesAsync([FromQuery] int brandId, [FromQuery] int offSet)
         {
-            if (brandId == 0 || offSet < 0)
+            if (brandId == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
@@ -164,7 +198,7 @@ namespace A1_Manager.Controllers
                 .Select(x => new
                 {
                     x.Id,
-                    x.Name,
+                    x.Name.Name,
                     Country = x.Country.Name,
                     City = x.City.Name,
                     x.Address
@@ -247,7 +281,19 @@ namespace A1_Manager.Controllers
 
                 branch.Id = originalBranch.Id;
                 branch.DateAddedId = originalBranch.DateAddedId;
-                branch.BrandId = originalBranch.BrandId;       
+                branch.BrandId = originalBranch.BrandId;
+
+                var isDuplicateBranch = await _db.Branches
+                    .Where(x => x.NameId == branch.NameId)
+                    .Where(x => x.CountryId == branch.CountryId)
+                    .Where(y => y.CityId == branch.CityId)
+                    .Where(x => x.Address == branch.Address)
+                    .FirstOrDefaultAsync();
+
+                if (isDuplicateBranch != null)
+                {
+                    return _serialization.SerializeMessage(500, "Duplicate Branch");
+                }
 
                 _db.Entry(originalBranch).State = EntityState.Detached;
                 _db.Entry(branch).State = EntityState.Modified;
@@ -263,15 +309,15 @@ namespace A1_Manager.Controllers
 
         [HttpDelete]
         [Route("/branch")]
-        public async Task<string> DeleteBranchAsync([FromQuery] int branchId)
+        public async Task<string> DeleteBranchAsync([FromQuery] int id)
         {
-            if(branchId == 0)
+            if(id == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
 
-           Branch branch = await _db.Branches
-                .Where(x => x.Id == branchId)
+            Branch branch = await _db.Branches
+                .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
 
             _db.Branches.Remove(branch);

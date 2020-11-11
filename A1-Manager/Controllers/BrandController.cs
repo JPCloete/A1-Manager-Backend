@@ -54,17 +54,27 @@ namespace A1_Manager.Controllers
 
             brand.DateAddedId = dateId;
 
-            var doesBrandExist = await _db.Brands
+            var isDuplicateBrand = await _db.Brands
                 .Where(x => x.Name == brand.Name)
                 .FirstOrDefaultAsync();
 
-            if(doesBrandExist != null)
+            if(isDuplicateBrand != null)
             {
                 return _serialization.SerializeMessage(401, "Brand Already Exists");
             }
 
             await _db.Brands.AddAsync(brand);
             await _db.SaveChangesAsync();
+
+            var newlyAddedBrand = await _db.Brands
+                .Where(x => x.Id == brand.Id)
+                .Select(y => new
+                {
+                    y.Id,
+                    y.Name,
+                    y.LogoURL
+                })
+                .FirstOrDefaultAsync();
 
             return "Success";
         }
@@ -78,10 +88,20 @@ namespace A1_Manager.Controllers
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
 
-            Brand brand = await _db.Brands
+            var brand = await _db.Brands
                 .Where(x => x.Id == id)
-                .Include(x => x.DateAdded)
+                .Include(y => y.DateAdded)
                 .Include(x => x.PreferredCurrency)
+                .Select(y => new
+                {
+                    y.Id,
+                    y.Name,
+                    y.LogoURL,
+                    y.PreferredCurrency.Symbol,
+                    y.Email,
+                    y.Telephone,
+                    DateAdded = y.DateAdded.Time
+                })
                 .FirstOrDefaultAsync();
 
             if (brand != null)
@@ -161,21 +181,25 @@ namespace A1_Manager.Controllers
 
         [HttpDelete]
         [Route("/brand")]
-        public async Task<string> DeleteBrandAsync([FromQuery] int brandId)
+        public async Task<string> DeleteBrandAsync([FromQuery] int id)
         {
-            if (brandId == 0)
+            if (id == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
 
             Brand brand = await _db.Brands
-                 .Where(x => x.Id == brandId)
+                 .Where(x => x.Id == id)
                  .FirstOrDefaultAsync();
 
-            _db.Brands.Remove(brand);
-            await _db.SaveChangesAsync();
+            if(brand != null) { 
+                _db.Brands.Remove(brand);
+                await _db.SaveChangesAsync();
 
-            return "Success";
+                return "Success";
+            }
+
+            return _serialization.SerializeMessage(404, "Not Found");
         }
     }
 }

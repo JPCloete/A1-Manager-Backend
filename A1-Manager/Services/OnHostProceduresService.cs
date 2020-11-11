@@ -1,6 +1,7 @@
 ﻿using A1_Manager.ApplicationDbContext;
 using A1_Manager.Models_Support;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Nancy.Json;
 using Newtonsoft.Json;
 using RestSharp;
@@ -56,6 +57,15 @@ namespace A1_Manager.Services
         [Route("/add-currencies")]
         public async Task<string> StoreCurrenciesAsync()
         {
+
+            var dbCurrencies = await _db.Currencies
+                .ToListAsync();
+            
+            if(dbCurrencies != null)
+            {
+                return "Invalid Request";
+            }
+
             var currencyResponseMessage = await _client.GetAsync("http://api.currencylayer.com/list?access_key=a9e7a42c970152a1e18befa4bdce36d5");
             var currencyResponse = await currencyResponseMessage.Content.ReadAsStringAsync();
             CurrenciesClass currenciesClass = JsonConvert.DeserializeObject<CurrenciesClass>(currencyResponse);
@@ -82,6 +92,15 @@ namespace A1_Manager.Services
         [Route("/add-countries")]
         public async Task<string> StoreCountriesAsync()
         {
+
+            var dbCountries = await _db.Countries
+                .ToListAsync();
+
+            if (dbCountries != null)
+            {
+                return "Invalid Request";
+            }
+
             var offset = 0;
             var countryCount = 251;
             while (offset < countryCount) {

@@ -35,6 +35,8 @@ namespace A1_Manager.Models_Main
         [ForeignKey("RetailPriceId")]
         public virtual MoneyPerAmount RetailPrice { get; set; }
 
+        public virtual int TaxPercentage { get; set; }
+
         public virtual int StockId { get; set; }
 
         [ForeignKey("StockId")]

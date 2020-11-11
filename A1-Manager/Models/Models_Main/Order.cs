@@ -39,15 +39,10 @@ namespace A1_Manager.Models_Main
         [ForeignKey("DeliveryDateId")]
         public virtual Date DeliveryDate { get; set; }
 
-        public virtual int AmountId { get; set; }
+        public virtual int MoneyPerAmountId { get; set; }
 
-        [ForeignKey("AmountId")]
-        public virtual Amount Amount { get; set; }
-
-        public virtual int CostId { get; set; }
-
-        [ForeignKey("CostId")]
-        public virtual Money Cost { get; set; }
+        [ForeignKey("MoneyPerAmountId")]
+        public virtual MoneyPerAmount MoneyPerAmount { get; set; }
 
         public virtual ICollection<ProductOrder> Products { get; set; }
     }

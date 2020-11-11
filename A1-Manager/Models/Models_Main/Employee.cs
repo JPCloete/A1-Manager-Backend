@@ -43,6 +43,7 @@ namespace A1_Manager.Models_Main
         public virtual Money Salary { get; set; }
 
         public virtual int? ContractId { get; set; }
+
         [ForeignKey("ContractId")]
         public virtual Contract? Contract { get; set; }
 
