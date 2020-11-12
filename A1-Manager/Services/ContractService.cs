@@ -2,6 +2,7 @@
 using A1_Manager.Interfaces.Services_Interfaces;
 using A1_Manager.Models_Support;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +55,28 @@ namespace A1_Manager.Services
             await _db.SaveChangesAsync();
 
             return contract.Id;
+        }
+
+        public async Task<bool> DeleteContractAsync(int id)
+        {
+            if(id == 0)
+            {
+                return false;
+            }
+
+            Contract contract =  await _db.Contracts
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            if(contract != null)
+            {
+                _db.Contracts.Remove(contract);
+                await _db.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
