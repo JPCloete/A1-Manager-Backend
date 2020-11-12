@@ -8,5 +8,7 @@ namespace A1_Manager.Interfaces.Services_Interfaces
     public interface IContractService
     {
         Task<int> AddContractAsync(string pdfUrl, string signedDate, string expirationDate);
+
+        Task<bool> DeleteContractAsync(int? id);
     }
 }

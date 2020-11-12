@@ -173,7 +173,21 @@ namespace A1_Manager.Controllers
                 _db.Entry(brand).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
 
-                return "Success";
+                var updatedBrand = await _db.Brands
+                    .Where(x => x.Id == brand.Id)
+                    .Select(y => new
+                    {
+                        y.Id,
+                        y.Name,
+                        y.LogoURL,
+                        y.PreferredCurrency.Symbol,
+                        y.Email,
+                        y.Telephone,
+                        DateAdded = y.DateAdded.Time
+                    })
+                    .FirstOrDefaultAsync();
+
+                return _serialization.SerializeObject(updatedBrand);
             }
 
             return _serialization.SerializeMessage(404, "Not Found");

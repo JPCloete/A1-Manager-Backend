@@ -57,7 +57,7 @@ namespace A1_Manager.Services
             return contract.Id;
         }
 
-        public async Task<bool> DeleteContractAsync(int id)
+        public async Task<bool> DeleteContractAsync(int? id)
         {
             if(id == 0)
             {

@@ -299,12 +299,33 @@ namespace A1_Manager.Controllers
                 _db.Entry(branch).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
 
-                return "Success";
+                var updatedBranch = await _db.Branches
+                    .Where(x => x.Id == branch.Id)
+                    .Select(y => new
+                    {
+                        y.Id,
+                        y.Name.Name,
+                        y.Email,
+                        y.Telephone,
+                        DateAdded = y.DateAdded.Time,
+                        Location = new
+                        {
+                            Country = y.Country.Name,
+                            City = y.City.Name,
+                            y.Address
+                        },
+                        OccupancyCost = new
+                        {
+                            Currency = y.PreferredCurrency.Symbol,
+                            Cost = y.OccupancyCost.Amount
+                        }
+                    })
+                    .FirstOrDefaultAsync();
+
+                return _serialization.SerializeObject(updatedBranch);
             }
-            else
-            {
-                return _serialization.SerializeMessage(404, "Not Found");
-            }
+
+            return _serialization.SerializeMessage(404, "Not Found");
         }
 
         [HttpDelete]

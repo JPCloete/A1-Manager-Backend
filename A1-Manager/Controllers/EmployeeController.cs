@@ -317,6 +317,7 @@ namespace A1_Manager.Controllers
             {
                 _db.Employees.Remove(employee);
                 await _db.SaveChangesAsync();
+                await _contract.DeleteContractAsync(employee.ContractId); //Deletes Contract bound to Employee
 
                 return "Success";
             }
