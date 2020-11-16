@@ -216,5 +216,30 @@ namespace A1_Manager.Controllers
 
             return _serialization.SerializeMessage(404, "Not Found");
         }
+
+        [HttpDelete]
+        [Route("/employee-roles")]
+        public async Task<string> DeleteEmployeeRoleAsync([FromQuery] int employeeId, [FromQuery] int roleId)
+        {
+            if(employeeId == 0 || roleId == 0)
+            {
+                return _serialization.SerializeMessage(404, "Invalid Request");
+            }
+
+            var employeeRole = await _db.EmployeeRoles
+                .Where(x => x.EmployeeId == employeeId)
+                .Where(y => y.RoleId == roleId)
+                .FirstOrDefaultAsync();
+
+            if(employeeRole != null)
+            {
+                _db.EmployeeRoles.Remove(employeeRole);
+                await _db.SaveChangesAsync();
+
+                return "Success";
+            }
+
+            return _serialization.SerializeMessage(404, "Not Found");
+        }
     }
 }
