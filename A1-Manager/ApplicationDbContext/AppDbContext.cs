@@ -29,12 +29,12 @@ namespace A1_Manager.ApplicationDbContext
                 bp.HasOne(x => x.Branch)
                     .WithMany(y => y.Suppliers)
                     .HasForeignKey(x => x.BranchId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 bp.HasOne(x => x.Supplier)
                     .WithMany(y => y.Branches)
                     .HasForeignKey(x => x.SupplierId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<EmployeeRole>(bs =>
@@ -457,7 +457,7 @@ namespace A1_Manager.ApplicationDbContext
 
                 r.HasMany(x => x.Employees)
                     .WithOne(y => y.Role)
-                    .HasForeignKey(x => x.EmployeeId)
+                    .HasForeignKey(x => x.RoleId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 r.HasOne(x => x.Brand)

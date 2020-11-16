@@ -2,7 +2,7 @@
 
 namespace A1_Manager.Migrations
 {
-    public partial class InitMigrationTest : Migration
+    public partial class InitMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -468,7 +468,7 @@ namespace A1_Manager.Migrations
                 {
                     BranchId = table.Column<int>(nullable: false),
                     SupplierId = table.Column<int>(nullable: false),
-                    ContractId = table.Column<int>(nullable: false)
+                    ContractId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -484,7 +484,7 @@ namespace A1_Manager.Migrations
                         column: x => x.ContractId,
                         principalTable: "Contracts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BranchSuppliers_Suppliers_SupplierId",
                         column: x => x.SupplierId,
@@ -703,8 +703,8 @@ namespace A1_Manager.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EmployeeRoles_Roles_EmployeeId",
-                        column: x => x.EmployeeId,
+                        name: "FK_EmployeeRoles_Roles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -962,6 +962,11 @@ namespace A1_Manager.Migrations
                 name: "IX_EmployeePresence_EmployeeId",
                 table: "EmployeePresence",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeRoles_RoleId",
+                table: "EmployeeRoles",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_BranchId",

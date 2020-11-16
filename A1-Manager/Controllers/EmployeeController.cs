@@ -120,13 +120,14 @@ namespace A1_Manager.Controllers
             }
 
             var Roles = await _db.EmployeeRoles
-                .Where(x => x.EmployeeId == id)
-                .Include(y => y.Role)
+                .Include(x => x.Role)
+                .Where(y => y.EmployeeId == id)
                 .Select(x => new
                 {
+                    x.RoleId,
                     x.Role.Name.Name
                 })
-                .ToArrayAsync();
+                .ToListAsync();
 
             var employee = await _db.Employees
                 .Where(x => x.Id == id)

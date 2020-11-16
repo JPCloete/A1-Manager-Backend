@@ -18,7 +18,7 @@ namespace A1_Manager.Models_Joins
 
         public virtual Supplier Supplier { get; set; }
 
-        public virtual int ContractId { get; set; }
+        public virtual int? ContractId { get; set; }
 
         [ForeignKey("ContractId")]
         public virtual Contract? Contract { get; set; }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A1_Manager.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201111190810_InitMigrationTest")]
-    partial class InitMigrationTest
+    [Migration("20201116134927_InitMigration")]
+    partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,7 +56,7 @@ namespace A1_Manager.Migrations
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ContractId")
+                    b.Property<int?>("ContractId")
                         .HasColumnType("int");
 
                     b.HasKey("BranchId", "SupplierId");
@@ -70,23 +70,25 @@ namespace A1_Manager.Migrations
 
             modelBuilder.Entity("A1_Manager.Models_Joins.EmployeeRole", b =>
                 {
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RoleId")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.HasKey("EmployeeId", "RoleId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("EmployeeRoles");
                 });
 
             modelBuilder.Entity("A1_Manager.Models_Joins.ProductOrder", b =>
                 {
-                    b.Property<int?>("BranchProductId")
+                    b.Property<int>("BranchProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderId")
+                    b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.HasKey("BranchProductId", "OrderId");
@@ -745,9 +747,7 @@ namespace A1_Manager.Migrations
 
                     b.HasOne("A1_Manager.Models_Support.Contract", "Contract")
                         .WithMany()
-                        .HasForeignKey("ContractId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContractId");
 
                     b.HasOne("A1_Manager.Models_Main.Supplier", "Supplier")
                         .WithMany("Branches")
@@ -766,7 +766,7 @@ namespace A1_Manager.Migrations
 
                     b.HasOne("A1_Manager.Models_Main.Role", "Role")
                         .WithMany("Employees")
-                        .HasForeignKey("EmployeeId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
