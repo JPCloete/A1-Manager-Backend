@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using A1_Manager.ApplicationDbContext;
 using A1_Manager.Interfaces.Services_Interfaces;
+using A1_Manager.Models_Joins;
 using A1_Manager.Models_Main;
 using A1_Manager.Support_Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -313,12 +314,22 @@ namespace A1_Manager.Controllers
             Employee employee = await _db.Employees
                 .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
-
+            
             if(employee != null)
             {
-                _db.Employees.Remove(employee);
-                await _db.SaveChangesAsync();
+                //Deletes EmployeeRoles for Employee in current context being deleted
+                List<EmployeeRole> employeeRoles = await _db.EmployeeRoles
+                    .Where(x => x.EmployeeId == id)
+                    .ToListAsync();
+
+                foreach (var role in employeeRoles)
+                {
+                    _db.EmployeeRoles.Remove(role);
+                }
+
+                _db.Employees.Remove(employee);   
                 await _contract.DeleteContractAsync(employee.ContractId); //Deletes Contract bound to Employee
+                await _db.SaveChangesAsync();
 
                 return "Success";
             }
