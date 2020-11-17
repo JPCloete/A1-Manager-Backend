@@ -10,5 +10,7 @@ namespace A1_Manager.Interfaces.Services_Interfaces
         Task<int> AddDateAsync(string dateTime);
 
         bool VerifyValidDate(string dateString, bool isAfterCurrentDate);
+
+        bool VerifyValidHourlyDate(string dateString, bool isAfterCurrentDate);
     }
 }

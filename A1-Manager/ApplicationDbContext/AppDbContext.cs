@@ -221,6 +221,11 @@ namespace A1_Manager.ApplicationDbContext
                     .HasForeignKey(x => x.BrandId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+                b.HasOne(x => x.Settings)
+                    .WithOne(y => y.Brand)
+                    .HasForeignKey<Settings>(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
                 b.HasOne(x => x.PreferredCurrency)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
@@ -470,6 +475,16 @@ namespace A1_Manager.ApplicationDbContext
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
+            modelBuilder.Entity<Settings>(s =>
+            {
+                s.HasKey(x => x.Id);
+
+                s.HasOne(x => x.Brand)
+                    .WithOne(y => y.Settings)
+                    .HasForeignKey<Settings>(x => x.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<Supplier>(s =>
             {
                 s.HasKey(x => x.Id);
@@ -552,6 +567,8 @@ namespace A1_Manager.ApplicationDbContext
         public DbSet<ProductSale> ProductSales { get; set; }
 
         public DbSet<Role> Roles { get; set; }
+
+        public DbSet<Settings> Settings { get; set; }
 
         public DbSet<Supplier> Suppliers { get; set; }
     }

@@ -79,5 +79,39 @@ namespace A1_Manager.Services
 
             return false;
         }
+
+        public bool VerifyValidHourlyDate(string dateString, bool isAfterCurrentDate)
+        {
+            DateTime? isValidDateTime;
+            try //try catch used for exception handling when dateString can't be parsed to DateTime type.
+            {
+                isValidDateTime = DateTime.ParseExact(dateString, "yyyy/MM/dd-HH/mm", null);
+            }
+            catch
+            {
+                return false;
+            }
+            if (isValidDateTime is DateTime)
+            {
+                if (isAfterCurrentDate == true)
+                {
+                    if (DateTime.UtcNow < isValidDateTime)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                if (DateTime.UtcNow >= isValidDateTime)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using A1_Manager.Main_Interfaces;
+using A1_Manager.Models.Models_Main;
 using A1_Manager.Models_Support;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,10 @@ namespace A1_Manager.Models_Main
 
         [ForeignKey("PreferredCurrencyId")]
         public virtual Currency PreferredCurrency { get; set; }
+
+        public virtual int SettingsId { get; set; }
+
+        public virtual Settings Settings { get; set; }
 
         public virtual ICollection<Branch>? Branches { get; set; }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using A1_Manager.ApplicationDbContext;
 using A1_Manager.Interfaces.Services_Interfaces;
+using A1_Manager.Models.Models_Main;
 using A1_Manager.Models_Joins;
 using A1_Manager.Models_Main;
 using A1_Manager.Support_Interfaces;
@@ -21,7 +22,8 @@ namespace A1_Manager.Controllers
         private readonly IIdentityService _identity;
         private readonly IMoneyService _money;
         private readonly IFkService _fkey;
-        public EmployeeController(AppDbContext db, ISerializationService serialization, IContractService contract, IIdentityService identity, IMoneyService money, IFkService fkey)
+        private readonly IDateService _date;
+        public EmployeeController(AppDbContext db, ISerializationService serialization, IContractService contract, IIdentityService identity, IMoneyService money, IFkService fkey, IDateService date)
         {
             _db = db;
             _serialization = serialization;
@@ -29,6 +31,7 @@ namespace A1_Manager.Controllers
             _identity = identity;
             _money = money;
             _fkey = fkey;
+            _date = date;
         }
 
         [HttpPost]
@@ -335,6 +338,40 @@ namespace A1_Manager.Controllers
             }
 
             return _serialization.SerializeMessage(404, "Not Found");
+        }
+
+        [HttpGet]
+        [Route("/employee-clock-in")]
+        public async Task<string> ClockInEmployeeAsync([FromQuery] int id)
+        {
+            if(id == 0)
+            {
+                return _serialization.SerializeMessage(404, "Invalid Request");
+            }
+
+            Employee employee = await _db.Employees
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            EmployeePresence lastEmployeePresence = await _db.EmployeePresence
+                .Where(x => x.ClockInTime.Time)
+            
+            if(employee.Status == "Working")
+            {
+                return _serialization.SerializeMessage(500, "Employee already Clocked In");
+            }
+
+            employee.Status = "Working";
+
+            var clockInTimeId = await _date.AddDateAsync(DateTime.UtcNow.ToString("yyyy/MM/dd-HH/mm"));
+
+            EmployeePresence employeePresence = new EmployeePresence()
+            { 
+                EmployeeId = id,
+                ClockInTimeId = clockInTimeId
+            };
+
+            await _db.EmployeePresence.AddAsync(employeePresence);
         }
     }
 }

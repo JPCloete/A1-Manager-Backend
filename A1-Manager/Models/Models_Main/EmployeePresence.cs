@@ -14,16 +14,16 @@ namespace A1_Manager.Models.Models_Main
 
         public virtual int EmployeeId { get; set; }
 
-        public virtual Employee Employee { get; set; }
+        public virtual Employee? Employee { get; set; }
 
         public virtual int ClockInTimeId { get; set; }
 
         [ForeignKey("ClockInTimeId")]
         public virtual Date ClockInTime { get; set; }
 
-        public virtual int ClockOutTimeId { get; set; }
+        public virtual int? ClockOutTimeId { get; set; }
 
         [ForeignKey("ClockOutTimeId")]
-        public virtual Date ClockOutTime { get; set; }
+        public virtual Date? ClockOutTime { get; set; }
     }
 }
