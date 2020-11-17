@@ -25,5 +25,7 @@ namespace A1_Manager.Models.Models_Main
 
         [ForeignKey("ClockOutTimeId")]
         public virtual Date? ClockOutTime { get; set; }
+
+        public bool AutoClockedOut { get; set; }
     }
 }

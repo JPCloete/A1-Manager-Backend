@@ -12,9 +12,9 @@ namespace A1_Manager.Models.Models_Main
     {
         public int Id { get; set; }
 
-        public int BrandId { get; set; }
+        public int? BrandId { get; set; }
 
-        public Brand Brand { get; set; }
+        public Brand? Brand { get; set; }
 
         public bool AutoClockOutEnabled { get; set; }
 

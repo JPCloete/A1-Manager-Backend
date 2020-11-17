@@ -39,20 +39,20 @@ namespace A1_Manager.Controllers
         public async Task<string> AddEmployeeAsync([FromBody] Employee employee)
         {
             if (string.IsNullOrEmpty(employee.FirstName.Name) || string.IsNullOrEmpty(employee.LastName.Name) ||
-                string.IsNullOrEmpty(employee.Salary.Currency.Symbol) || employee.Salary.Amount == 0 || 
+                string.IsNullOrEmpty(employee.Salary.Currency.Symbol) || employee.Salary.Amount == 0 ||
                 employee.BranchId == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
 
             bool isValidBranch = await _fkey.VerifyBranchAsync(employee.BranchId);
-            if(isValidBranch == false)
+            if (isValidBranch == false)
             {
                 return _serialization.SerializeMessage(404, "Invalid Branch");
             }
 
             int firstNameId = await _identity.AddIdentityAsync(employee.FirstName.Name);
-            if(firstNameId == 0)
+            if (firstNameId == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid FirstName");
             }
@@ -70,7 +70,7 @@ namespace A1_Manager.Controllers
             employee.LastName = null;
 
             int salaryId = await _money.AddMoneyAsync(employee.Salary.Amount, employee.Salary.Currency.Symbol);
-            if(salaryId == 0)
+            if (salaryId == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Salary");
             }
@@ -102,7 +102,8 @@ namespace A1_Manager.Controllers
                 .Include(y => y.Salary)
                 .Include(x => x.Branch)
                 .Include(y => y.Roles)
-                .Select(y => new {
+                .Select(y => new
+                {
                     y.Id,
                     FirstName = y.FirstName.Name,
                     LastName = y.LastName.Name,
@@ -118,7 +119,7 @@ namespace A1_Manager.Controllers
         [Route("/employee")]
         public async Task<string> GetEmployeeAsync([FromQuery] int id)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
@@ -140,7 +141,8 @@ namespace A1_Manager.Controllers
                 .Include(y => y.Salary)
                 .Include(x => x.Branch)
                 .Include(y => y.Roles)
-                .Select(y => new { 
+                .Select(y => new
+                {
                     y.Id,
                     FirstName = y.FirstName.Name,
                     LastName = y.LastName.Name,
@@ -168,7 +170,7 @@ namespace A1_Manager.Controllers
         [Route("/employees")]
         public async Task<string> GetBranchEmployeesAsync([FromQuery] int branchId, [FromQuery] int offSet)
         {
-            if(branchId == 0 || offSet < 0)
+            if (branchId == 0 || offSet < 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
@@ -187,14 +189,14 @@ namespace A1_Manager.Controllers
                 .Take(20)
                 .ToListAsync();
 
-            if(employees != null)
+            if (employees != null)
             {
                 return _serialization.SerializeObject(employees);
             }
 
             return _serialization.SerializeMessage(404, "Not Found");
         }
-        
+
         [HttpPut]
         [Route("/employee")]
         public async Task<string> UpdateEmployeeAsync([FromBody] Employee employee)
@@ -213,7 +215,7 @@ namespace A1_Manager.Controllers
                 .Include(y => y.Contract.ExpirationDate)
                 .FirstOrDefaultAsync();
 
-            if(originalEmployee != null)
+            if (originalEmployee != null)
             {
 
                 bool isValidBranch = await _fkey.VerifyBranchAsync(employee.BranchId);
@@ -283,7 +285,8 @@ namespace A1_Manager.Controllers
                     .Include(y => y.Salary)
                     .Include(x => x.Branch)
                     .Include(y => y.Roles)
-                    .Select(y => new {
+                    .Select(y => new
+                    {
                         y.Id,
                         FirstName = y.FirstName.Name,
                         LastName = y.LastName.Name,
@@ -309,7 +312,7 @@ namespace A1_Manager.Controllers
         [Route("/employee")]
         public async Task<string> DeleteEmployeeAsync([FromQuery] int id)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
@@ -317,8 +320,8 @@ namespace A1_Manager.Controllers
             Employee employee = await _db.Employees
                 .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
-            
-            if(employee != null)
+
+            if (employee != null)
             {
                 //Deletes EmployeeRoles for Employee in current context being deleted
                 List<EmployeeRole> employeeRoles = await _db.EmployeeRoles
@@ -330,7 +333,7 @@ namespace A1_Manager.Controllers
                     _db.EmployeeRoles.Remove(role);
                 }
 
-                _db.Employees.Remove(employee);   
+                _db.Employees.Remove(employee);
                 await _contract.DeleteContractAsync(employee.ContractId); //Deletes Contract bound to Employee
                 await _db.SaveChangesAsync();
 
@@ -344,7 +347,7 @@ namespace A1_Manager.Controllers
         [Route("/employee-clock-in")]
         public async Task<string> ClockInEmployeeAsync([FromQuery] int id)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 return _serialization.SerializeMessage(404, "Invalid Request");
             }
@@ -353,25 +356,51 @@ namespace A1_Manager.Controllers
                 .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
 
-            EmployeePresence lastEmployeePresence = await _db.EmployeePresence
-                .Where(x => x.ClockInTime.Time)
-            
-            if(employee.Status == "Working")
+            if (employee != null)
             {
-                return _serialization.SerializeMessage(500, "Employee already Clocked In");
+                Settings settings = await _db.Settings
+                   .Where(x => x.Brand.Id == employee.Branch.Brand.Id)
+                   .FirstOrDefaultAsync();
+
+                EmployeePresence lastEmployeePresence = await _db.EmployeePresence
+                    .Where(x => x.EmployeeId == id)
+                    .OrderByDescending(y => y.Id)
+                    .FirstOrDefaultAsync();
+
+                if (lastEmployeePresence.ClockOutTimeId == null)
+                {
+                    if (settings.AutoClockOutEnabled == false)
+                    {
+                        return _serialization.SerializeMessage(404, "Invalid Clock In Attempt.");
+                    }
+
+                    DateTime parsedDate = DateTime.ParseExact(lastEmployeePresence.ClockInTime.Time, "yyyy/MM/dd-HH/mm", null);
+                    DateTime parsedSettingsDate = DateTime.ParseExact(settings.AutoClockOutTime.Time, "HH/mm", null);
+
+                    if (parsedDate.AddHours(parsedSettingsDate.Hour) >= DateTime.UtcNow)
+                    {
+                        int autoClockOutTimeId = await _date.AddDateAsync(parsedDate.AddHours(parsedSettingsDate.Hour).ToString("HH/mm"));
+                        lastEmployeePresence.ClockOutTimeId = autoClockOutTimeId;
+
+                        _db.Entry(lastEmployeePresence).State = EntityState.Modified;
+                    }
+                }
+
+                employee.Status = "Working";
+
+                var clockInTimeId = await _date.AddDateAsync(DateTime.UtcNow.ToString("yyyy/MM/dd-HH/mm"));
+
+                EmployeePresence employeePresence = new EmployeePresence()
+                {
+                    EmployeeId = id,
+                    ClockInTimeId = clockInTimeId
+                };
+
+                await _db.EmployeePresence.AddAsync(employeePresence);
+                await _db.SaveChangesAsync();
             }
 
-            employee.Status = "Working";
-
-            var clockInTimeId = await _date.AddDateAsync(DateTime.UtcNow.ToString("yyyy/MM/dd-HH/mm"));
-
-            EmployeePresence employeePresence = new EmployeePresence()
-            { 
-                EmployeeId = id,
-                ClockInTimeId = clockInTimeId
-            };
-
-            await _db.EmployeePresence.AddAsync(employeePresence);
+            return _serialization.SerializeMessage(404, "Not Found");
         }
     }
 }

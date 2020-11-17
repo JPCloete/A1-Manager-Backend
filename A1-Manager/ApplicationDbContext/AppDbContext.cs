@@ -223,7 +223,7 @@ namespace A1_Manager.ApplicationDbContext
 
                 b.HasOne(x => x.Settings)
                     .WithOne(y => y.Brand)
-                    .HasForeignKey<Settings>(x => x.BrandId)
+                    .HasForeignKey<Brand>(x => x.SettingsId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasOne(x => x.PreferredCurrency)
@@ -481,7 +481,7 @@ namespace A1_Manager.ApplicationDbContext
 
                 s.HasOne(x => x.Brand)
                     .WithOne(y => y.Settings)
-                    .HasForeignKey<Settings>(x => x.BrandId)
+                    .HasForeignKey<Brand>(x => x.SettingsId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
